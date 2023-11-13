@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.3.1/dist/css/bootstrap.min.css" integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/vue/2.6.10/vue.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/axios/1.6.0/axios.js"></script>
+
+</head>
+<body>
+{% verbatim %}
+
+
+    <div id="dossierAdd">
+      <form @submit.prevent="submitForm">
+        <div>
+          <label for="contractID">Введите contractID:</label><br>
+          <input id="contractID" type="text" v-model="contract" required/>
+        </div>
+        <div>
+          <label for="barcode">Введите barcode:</label><br>
+          <input id="barcode" type="text" v-model="barcode" required/>
+        </div>
+        <div>
+          <label for="sectorID">Введите ID сектора:</label><br>
+          <input id="sectorID" type="text" v-model="current_sector" required/>
+        </div>
+        <button :type="submit">Submit</button>
+        <div>
+          <h3>Data retrieved from server:</h3>
+          <p v-if="success"> {{ success }}</p>
+          <pre>{{ response }}</pre>
+        </div>
+      </form>
+    </div>
+
+    <div id="dossierList">
+        <div v-for="dossier in dossier">
+            Продукт: {{ dossier.contract }}  ШК: {{ dossier.barcode }}
+        </div>
+    </div>
+
+{% endverbatim %}
+
+<script src="/static/test.js"></script>
+</body>
+</html>

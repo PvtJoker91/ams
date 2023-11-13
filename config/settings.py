@@ -36,7 +36,9 @@ INSTALLED_APPS += [
 # apps
 INSTALLED_APPS += [
     'api',
-    'common',
+    'common_archive',
+    'bank_clients',
+    'registration',
 ]
 
 # after apps
@@ -60,7 +62,7 @@ ROOT_URLCONF = 'config.urls'
 TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
-        'DIRS': [],
+        'DIRS': ['templates'],
         'APP_DIRS': True,
         'OPTIONS': {
             'context_processors': [
@@ -131,7 +133,7 @@ DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 ######################
 # LOCALIZATION
 ######################
-LANGUAGE_CODE = 'en-us'
+LANGUAGE_CODE = 'ru-RU'
 TIME_ZONE = 'UTC'
 USE_I18N = True
 USE_TZ = True
@@ -140,7 +142,8 @@ USE_TZ = True
 # STATIC AND MEDIA
 ######################
 STATIC_URL = '/static/'
-STATIC_ROOT = os.path.join(BASE_DIR, 'static/')
+STATICFILES_DIRS = [os.path.join(BASE_DIR, 'static/')]
+# STATIC_ROOT = os.path.join(BASE_DIR, 'static/')
 MEDIA_URL = '/media/'
 MEDIA_ROOT = os.path.join(BASE_DIR, 'media/')
 
@@ -165,7 +168,7 @@ SPECTACULAR_SETTINGS = {
     ],
 
     'SERVE_AUTHENTICATION': [
-        'rest_framework_simplejwt.authentication.JWTAuthentication',
+        # 'rest_framework_simplejwt.authentication.JWTAuthentication',
         'rest_framework.authentication.BasicAuthentication',
     ],
 
