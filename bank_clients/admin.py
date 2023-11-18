@@ -20,7 +20,7 @@ class ContractInline(admin.TabularInline):
 ##############################
 @admin.register(Contract)
 class ContractAdmin(admin.ModelAdmin):
-    list_display = ('product', 'client', 'contract_number', 'time_create')
+    list_display = ('product', 'client', 'contract_number', 'time_create',)
 
 
 @admin.register(Client)

@@ -1,10 +1,35 @@
 from django.contrib import admin
 
-from common_archive.models import Archive, StorageShelf, ArchiveBox, FileBox, Dossier, Sector
+from common_archive.models import Archive, StorageShelf, ArchiveBox, Dossier, Sector, Registry
+
+
+
+
+##############################
+# INLINES
+##############################
+class DossierInline(admin.TabularInline):
+    model = Dossier
+    fields = ('barcode',)
+    readonly_fields = ('barcode',)
+    can_delete = False
+
+
+
+
+##############################
+# MODELS
+##############################
+
 
 
 @admin.register(Archive)
 class ArchiveAdmin(admin.ModelAdmin):
+    list_display = 'name',
+
+
+@admin.register(Sector)
+class SectorAdmin(admin.ModelAdmin):
     list_display = 'name',
 
 
@@ -16,17 +41,18 @@ class StorageShelfAdmin(admin.ModelAdmin):
 
 @admin.register(ArchiveBox)
 class ArchiveBoxAdmin(admin.ModelAdmin):
-    list_display = 'barcode', 'current_sector'
+    list_display = 'barcode', 'current_sector', 'status'
+    inlines = (DossierInline,)
 
-@admin.register(FileBox)
-class FileBoxAdmin(admin.ModelAdmin):
-    list_display = 'barcode', 'archive_box', 'current_sector'
 
 @admin.register(Dossier)
 class DossierAdmin(admin.ModelAdmin):
-    list_display = 'contract', 'barcode', 'current_sector', 'status', 'archive_box', 'file_box'
+    list_display = 'contract', 'barcode', 'current_sector', 'status', 'archive_box',
+    search_fields = 'contract__contract_number',
 
-@admin.register(Sector)
-class SectorAdmin(admin.ModelAdmin):
-    list_display = 'name',
 
+@admin.register(Registry)
+class RegistryAdmin(admin.ModelAdmin):
+    list_display = 'type', 'barcode'
+    search_fields = 'dossier__barcode',
+    filter_horizontal = 'dossiers',

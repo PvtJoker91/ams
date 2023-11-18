@@ -26,22 +26,22 @@ class StorageShelf(models.Model):
         return self.shelf_code
 
 
-def fill_storage():
-    archive_code = '10'
-    levels = ['01', '02']
-    rooms = ['01', '02']
-    rows = ['A', 'B', 'C', 'D']
-    racks = ['01', '02', '03']
-    shelfs = ['01', '02', '03']
-
-    for level in levels:
-        for room in rooms:
-            for row in rows:
-                for rack in racks:
-                    for shelf in shelfs:
-                        StorageShelf.objects.create(archive_id=Archive.objects.all()[0].id,
-                                                    shelf_code=f'{archive_code}.{level}.{room}.-{row}.{rack}.{shelf}')
-    return
+# def fill_storage():
+#     archive_code = '10'
+#     levels = ['01', '02']
+#     rooms = ['01', '02']
+#     rows = ['A', 'B', 'C', 'D']
+#     racks = ['01', '02', '03']
+#     shelfs = ['01', '02', '03']
+#
+#     for level in levels:
+#         for room in rooms:
+#             for row in rows:
+#                 for rack in racks:
+#                     for shelf in shelfs:
+#                         StorageShelf.objects.create(archive_id=Archive.objects.all()[0].id,
+#                                                     shelf_code=f'{archive_code}.{level}.{room}.-{row}.{rack}.{shelf}')
+#     return
 
 
 class Sector(models.Model):
@@ -56,10 +56,11 @@ class Sector(models.Model):
 
 
 class ArchiveBox(models.Model):
-    barcode = models.CharField(max_length=20, verbose_name='Штрих-код АБ', unique=True)
+    barcode = models.CharField(max_length=20, verbose_name='Штрих-код АБ')
     current_sector = models.ForeignKey('Sector', on_delete=models.SET_NULL, related_name='archive_box', null=True)
     storage_address = models.ForeignKey('StorageShelf', on_delete=models.PROTECT, related_name='archive_box',
-                                        verbose_name='Размещение', null=True, default=None)
+                                        verbose_name='Размещение', blank=True, null=True, default=None)
+    status = models.CharField(max_length=30, verbose_name='Статус бокса', blank=True, null=True)
 
     def __str__(self):
         return f'{self.barcode}'
@@ -69,22 +70,10 @@ class ArchiveBox(models.Model):
         verbose_name_plural = 'Архивные боксы'
 
 
-class FileBox(models.Model):
-    barcode = models.CharField(max_length=20, verbose_name='Штрих-код ФБ', unique=True)
-    archive_box = models.ForeignKey('ArchiveBox', on_delete=models.PROTECT, default=None, related_name='file_box')
-    current_sector = models.ForeignKey('Sector', on_delete=models.SET_NULL, related_name='file_box', null=True)
-
-    def __str__(self):
-        return f'{self.barcode}'
-
-    class Meta:
-        verbose_name = 'Файловый бокс'
-        verbose_name_plural = 'Файловые боксы'
-
 
 class Dossier(models.Model):
     contract = models.ForeignKey('bank_clients.Contract', on_delete=models.PROTECT, related_name='dossiers',
-                                 verbose_name='Досье', null=True, blank=True)
+                                 verbose_name='Договор', null=True, blank=True)
     barcode = models.CharField(max_length=40, verbose_name='Штрих-код досье', unique=True)
     current_sector = models.ForeignKey('Sector', on_delete=models.SET_NULL, related_name='dossiers',
                                        verbose_name='Расположение', null=True)
@@ -94,16 +83,23 @@ class Dossier(models.Model):
         verbose_name='Архивный бокс', related_name='dossiers',
         null=True, blank=True
     )
-    file_box = models.ForeignKey(
-        'FileBox', on_delete=models.PROTECT,
-        verbose_name='Файловый бокс', related_name='dossiers',
-        null=True, blank=True,
-
-    )
 
     class Meta:
         verbose_name = 'Досье'
         verbose_name_plural = 'Досье'
 
     def __str__(self):
-        return f'{self.contract.product.name} {self.barcode}'
+        return f'{self.barcode}'
+
+
+class Registry(models.Model):
+    type = models.CharField(max_length=20)
+    barcode = models.CharField(max_length=40, verbose_name='Штрих-код реестра', unique=True)
+    dossiers = models.ManyToManyField('Dossier', verbose_name='Досье')
+
+    class Meta:
+        verbose_name = 'Реестр'
+        verbose_name_plural = 'Реестры'
+
+    def __str__(self):
+        return f'{self.type} {self.barcode}'
