@@ -2,7 +2,7 @@ import re
 
 
 def validate_ab_barcode(barcode):
-    pattern = r'AB/\d{2}-\d{6}'
+    pattern = r'AB-\d{2}-\d{6}'
     return re.match(pattern, barcode)
 
 

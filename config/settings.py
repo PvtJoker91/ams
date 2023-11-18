@@ -39,6 +39,7 @@ INSTALLED_APPS += [
     'common_archive',
     'bank_clients',
     'registration',
+    'logistic',
 ]
 
 # after apps
