@@ -14,6 +14,12 @@ class DossierInline(admin.TabularInline):
     readonly_fields = ('barcode',)
     can_delete = False
 
+class ArchiveBoxInline(admin.TabularInline):
+    model = ArchiveBox
+    fields = ('barcode',)
+    readonly_fields = ('barcode',)
+    can_delete = False
+
 
 
 
@@ -37,7 +43,7 @@ class SectorAdmin(admin.ModelAdmin):
 class StorageShelfAdmin(admin.ModelAdmin):
     list_display = 'shelf_code', 'archive'
     ordering = 'shelf_code',
-
+    inlines = (ArchiveBoxInline,)
 
 @admin.register(ArchiveBox)
 class ArchiveBoxAdmin(admin.ModelAdmin):
@@ -47,7 +53,7 @@ class ArchiveBoxAdmin(admin.ModelAdmin):
 
 @admin.register(Dossier)
 class DossierAdmin(admin.ModelAdmin):
-    list_display = 'contract', 'barcode', 'current_sector', 'status', 'archive_box',
+    list_display = 'contract', 'barcode', 'current_sector', 'status', 'archive_box', 'storage_address'
     search_fields = 'contract__contract_number',
 
 

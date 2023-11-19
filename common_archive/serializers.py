@@ -7,7 +7,7 @@ from common_archive.validators import validate_ab_barcode, validate_dossier_barc
 class DossierSerializer(serializers.ModelSerializer):
     class Meta:
         model = Dossier
-        fields = ('contract', 'barcode',)
+        fields = '__all__'
 
     def validate(self, attrs):
         barcode = attrs['barcode']
@@ -17,11 +17,9 @@ class DossierSerializer(serializers.ModelSerializer):
 
 
 class ABSerializer(serializers.ModelSerializer):
-    dossiers = DossierSerializer(many=True, read_only=True)
-
     class Meta:
         model = ArchiveBox
-        fields = ('id', 'barcode', 'current_sector', 'dossiers', 'status')
+        fields = '__all__'
 
     def validate(self, attrs):
         barcode = attrs['barcode']

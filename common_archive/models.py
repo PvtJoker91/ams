@@ -70,7 +70,6 @@ class ArchiveBox(models.Model):
         verbose_name_plural = 'Архивные боксы'
 
 
-
 class Dossier(models.Model):
     contract = models.ForeignKey('bank_clients.Contract', on_delete=models.PROTECT, related_name='dossiers',
                                  verbose_name='Договор', null=True, blank=True)
@@ -79,7 +78,7 @@ class Dossier(models.Model):
                                        verbose_name='Расположение', null=True)
     status = models.CharField(max_length=30, default='На регистрации', verbose_name='Статус досье')
     archive_box = models.ForeignKey(
-        'ArchiveBox', on_delete=models.PROTECT,
+        'ArchiveBox', on_delete=models.SET_NULL,
         verbose_name='Архивный бокс', related_name='dossiers',
         null=True, blank=True
     )
@@ -90,6 +89,13 @@ class Dossier(models.Model):
 
     def __str__(self):
         return f'{self.barcode}'
+
+    @property
+    def storage_address(self):
+        if self.archive_box:
+            return self.archive_box.storage_address
+        else:
+            return None
 
 
 class Registry(models.Model):
