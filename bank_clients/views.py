@@ -8,7 +8,7 @@ from bank_clients.serializers import ContractSerializer
 
 
 class ContractSearchView(mixins.ListModelMixin, GenericViewSet):
-    queryset = Contract.objects.all().prefetch_related('dossiers')
+    queryset = Contract.objects.all().select_related('product').select_related('client')
     serializer_class = ContractSerializer
     permission_classes = [AllowAny]
     filter_backends = [DjangoFilterBackend, filters.SearchFilter]
