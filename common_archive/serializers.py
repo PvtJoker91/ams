@@ -1,7 +1,7 @@
 from rest_framework import serializers
 
-from common_archive.models import ArchiveBox, Dossier
-from common_archive.validators import validate_ab_barcode, validate_dossier_barcode
+from common_archive.models import ArchiveBox, Dossier, StorageShelf
+from services.validators import validate_ab_barcode, validate_dossier_barcode
 
 
 class DossierSerializer(serializers.ModelSerializer):
@@ -26,3 +26,9 @@ class ABSerializer(serializers.ModelSerializer):
         if not validate_ab_barcode(barcode):
             raise serializers.ValidationError("Wrong barcode format")
         return attrs
+
+
+class ShelfSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = StorageShelf
+        fields = ('shelf_code',)
