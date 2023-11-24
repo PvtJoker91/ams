@@ -69,13 +69,17 @@ class ArchiveBox(models.Model):
         verbose_name = 'Архивный бокс'
         verbose_name_plural = 'Архивные боксы'
 
+    @property
+    def dossiers_number(self):
+        return self.dossiers.count()
+
 
 class Dossier(models.Model):
     contract = models.ForeignKey('bank_clients.Contract', on_delete=models.PROTECT, related_name='dossiers',
                                  verbose_name='Договор', null=True, blank=True)
     barcode = models.CharField(max_length=40, verbose_name='Штрих-код досье', unique=True)
     current_sector = models.ForeignKey('Sector', on_delete=models.SET_NULL, related_name='dossiers',
-                                       verbose_name='Расположение', null=True)
+                                       verbose_name='Расположение', null=True, blank=True)
     status = models.CharField(max_length=30, default='На регистрации', verbose_name='Статус досье')
     archive_box = models.ForeignKey(
         'ArchiveBox', on_delete=models.SET_NULL,

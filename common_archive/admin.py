@@ -3,8 +3,6 @@ from django.contrib import admin
 from common_archive.models import Archive, StorageShelf, ArchiveBox, Dossier, Sector, Registry
 
 
-
-
 ##############################
 # INLINES
 ##############################
@@ -14,6 +12,7 @@ class DossierInline(admin.TabularInline):
     readonly_fields = ('barcode',)
     can_delete = False
 
+
 class ArchiveBoxInline(admin.TabularInline):
     model = ArchiveBox
     fields = ('barcode',)
@@ -21,12 +20,9 @@ class ArchiveBoxInline(admin.TabularInline):
     can_delete = False
 
 
-
-
 ##############################
 # MODELS
 ##############################
-
 
 
 @admin.register(Archive)
@@ -45,9 +41,10 @@ class StorageShelfAdmin(admin.ModelAdmin):
     ordering = 'shelf_code',
     inlines = (ArchiveBoxInline,)
 
+
 @admin.register(ArchiveBox)
 class ArchiveBoxAdmin(admin.ModelAdmin):
-    list_display = 'barcode', 'current_sector', 'status'
+    list_display = 'barcode', 'current_sector', 'status', 'dossiers_number'
     inlines = (DossierInline,)
 
 
