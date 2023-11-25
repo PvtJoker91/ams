@@ -1,7 +1,7 @@
 from rest_framework.exceptions import ParseError
 
 from common_archive.models import StorageShelf, ArchiveBox
-from services.dossiers import update_dossiers_in_box_sector
+from services.dossiers import update_dossiers_in_box_status
 
 
 def create_box_or_update_status(validated_data):
@@ -16,7 +16,7 @@ def create_box_or_update_status(validated_data):
             archive_box.status = validated_data.get('status', None)
             archive_box.storage_address = None
             archive_box.save()
-            update_dossiers_in_box_sector(archive_box)
+            update_dossiers_in_box_status(archive_box, archive_box.status)
     else:
         archive_box = ArchiveBox.objects.create(**validated_data)
     return archive_box
@@ -25,7 +25,7 @@ def create_box_or_update_status(validated_data):
 def update_box_status(instance, validated_data):
     instance.status = validated_data.get('status')
     instance.save()
-    update_dossiers_in_box_sector(instance)
+    update_dossiers_in_box_status(instance, instance.status)
     return instance
 
 

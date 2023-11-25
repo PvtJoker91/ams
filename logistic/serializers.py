@@ -1,6 +1,7 @@
 from common_archive.models import ArchiveBox, Dossier
 from common_archive.serializers import ABSerializer, ShelfSerializer, DossierSerializer
 from services.archive_box import update_box_storage_address, create_box_or_update_status, update_box_status
+from services.dossiers import update_dossier_box_and_status
 
 
 class ABPlacementSerializer(ABSerializer):
@@ -18,8 +19,17 @@ class ABPlacementSerializer(ABSerializer):
         return instance
 
 
+class DossierCompletionSerializer(DossierSerializer):
+    class Meta:
+        model = Dossier
+        fields = ('barcode', 'current_sector', 'status', 'archive_box')
+
+    def update(self, instance, validated_data):
+        return update_dossier_box_and_status(instance, validated_data)
+
+
 class ABCompletionSerializer(ABSerializer):
-    dossiers = DossierSerializer(many=True, read_only=True)
+    dossiers = DossierCompletionSerializer(many=True, read_only=True)
 
     class Meta:
         model = ArchiveBox
@@ -30,9 +40,3 @@ class ABCompletionSerializer(ABSerializer):
 
     def update(self, instance, validated_data):
         return update_box_status(instance, validated_data)
-
-
-class DossierCompletionSerializer(DossierSerializer):
-    class Meta:
-        model = Dossier
-        fields = ('barcode', 'current_sector', 'status', 'archive_box')

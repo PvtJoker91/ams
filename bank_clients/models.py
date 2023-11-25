@@ -1,3 +1,5 @@
+import datetime
+
 from django.db import models
 
 
@@ -42,10 +44,12 @@ class Contract(models.Model):
         return f'{self.product.name} | {self.client.last_name} {self.client.name}'
 
 
-#Заполнение банковской базы
-#
+# Заполнение банковской базы
+
 # def fill_clients(quantity):
 #     import random
+#     import datetime
+#
 #     names = 'Александр,Дмитрий,Максим,Сергей,Андрей,Алексей,Артём,Илья,Кирилл,Михаил,Никита,Матвей,Роман,Егор,Арсений,Иван,' \
 #             'Денис,Евгений,Даниил,Тимофей,Владислав,Игорь,Владимир,Павел,Руслан,Марк,Константин,Тимур,Олег,Ярослав,Антон,Николай,' \
 #             'Глеб,Данил,Савелий,Вадим,Степан,Юрий,Богдан,Артур,Семен,Макар,Лев,Виктор,Елисей,Виталий,Вячеслав,Захар,Мирон,Дамир,Георгий,' \
@@ -77,5 +81,5 @@ class Contract(models.Model):
 #         Contract.objects.create(product_id=Product.objects.all()[random.randint(0, 4)].id,
 #                               client_id=Client.objects.all()[random.randint(0, 49)].id,
 #                               contract_number=str(random.randint(1000000, 9999999)),
-#                               time_create='2023-10-25'
+#                               time_create=datetime.date.today()
 #                               )

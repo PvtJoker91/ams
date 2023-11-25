@@ -9,6 +9,8 @@ class DossierRegSerializer(DossierSerializer):
         fields = ('contract', 'barcode', 'current_sector', 'status', 'archive_box')
 
 
+
+
 class ABRegSerializer(ABSerializer):
     dossiers = DossierRegSerializer(many=True, read_only=True)
 
