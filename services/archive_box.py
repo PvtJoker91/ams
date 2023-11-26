@@ -1,56 +1,71 @@
 from rest_framework.exceptions import ParseError
 
 from common_archive.models import StorageShelf, ArchiveBox
-from services.dossiers import update_dossiers_in_box_status
+from common_archive.statuses import AB_CHECKING_AVAILABLE_STATUSES, AB_COMPLETION_AVAILABLE_STATUSES, \
+    AB_PLACEMENT_AVAILABLE_STATUSES, AB_REGISTRATION_AVAILABLE_STATUSES
+from services.dossiers import update_dossiers_in_box_status_and_sector
 
 
-def create_box_or_update_status(validated_data):
+def create_or_update_box_under_registration(validated_data):
     if ArchiveBox.objects.filter(barcode=validated_data.get('barcode')):
         archive_box = ArchiveBox.objects.get(barcode=validated_data.get('barcode'))
-        if archive_box.current_sector != validated_data.get('current_sector', None):
-            raise ParseError(
-                {
-                    'sector_error':
-                        f"Archive box should not be on this operation. Box current sector is {archive_box.current_sector}"})
-        else:
+        if archive_box.status in AB_REGISTRATION_AVAILABLE_STATUSES:
             archive_box.status = validated_data.get('status', None)
             archive_box.storage_address = None
             archive_box.save()
-            update_dossiers_in_box_status(archive_box, archive_box.status)
+            update_dossiers_in_box_status_and_sector(archive_box)
+        else:
+            raise ParseError(
+                {
+                    'status_error':
+                        f"Archive box should not be on this operation. Box current operation is {archive_box.status}"})
     else:
         archive_box = ArchiveBox.objects.create(**validated_data)
     return archive_box
 
 
-def update_box_status(instance, validated_data):
-    instance.status = validated_data.get('status')
-    instance.save()
-    update_dossiers_in_box_status(instance, instance.status)
+def create_or_update_box_under_completion(validated_data):
+    if ArchiveBox.objects.filter(barcode=validated_data.get('barcode')):
+        archive_box = ArchiveBox.objects.get(barcode=validated_data.get('barcode'))
+        if archive_box.status in AB_COMPLETION_AVAILABLE_STATUSES:
+            archive_box.status = validated_data.get('status', None)
+            archive_box.storage_address = None
+            archive_box.save()
+            update_dossiers_in_box_status_and_sector(archive_box)
+        else:
+            raise ParseError(
+                {
+                    'status_error':
+                        f"Archive box should not be on this operation. Box current operation is {archive_box.status}"})
+    else:
+        archive_box = ArchiveBox.objects.create(**validated_data)
+    return archive_box
+
+
+def update_box_under_checking(instance, validated_data):
+    if instance.status in AB_CHECKING_AVAILABLE_STATUSES:
+        instance.status = validated_data.get('status')
+        instance.current_sector = validated_data.get('current_sector')
+        instance.save()
+        update_dossiers_in_box_status_and_sector(instance)
+    else:
+        raise ParseError(
+            {'status_error':
+                 f"Archive box should not be on this operation. Box current operation is {instance.status}"})
     return instance
 
 
-def update_box_storage_address(validated_data):
-    storage_address = dict(validated_data.get('storage_address'))
-    if StorageShelf.objects.filter(shelf_code=storage_address.get('shelf_code')):
+def update_box_under_placement(instance, validated_data):
+    if instance.status in AB_PLACEMENT_AVAILABLE_STATUSES:
+        storage_address = dict(validated_data.get('storage_address'))
         storage_address_instance = StorageShelf.objects.get(shelf_code=storage_address.get('shelf_code'))
-    return storage_address_instance
-
-# def update_dossiers_in_box_sector(instance, validated_data):
-#     dossiers = validated_data.pop('dossiers')
-#     keep_dossiers = []
-#     for dossier in dossiers:
-#         if 'id' in dossier.keys():
-#             if Dossier.objects.filter(id=dossier['id']).exists():
-#                 d = Dossier.objects.get(id=dossier['id'])
-#                 d.sector = dossier.get('sector', d.sector)
-#                 d.save()
-#                 keep_dossiers.append(d.id)
-#             else:
-#                 continue
-#         else:
-#             d = Dossier.objects.create(**dossier, archive_box=instance)
-#             keep_dossiers.append(d.id)
-#     for dossier in instance.dossiers:
-#         if dossier.id not in keep_dossiers:
-#             dossier.delete()
-#     return instance
+        instance.storage_address = storage_address_instance
+        instance.current_sector = validated_data.get('current_sector', instance.current_sector)
+        instance.status = validated_data.get('status', instance.status)
+        instance.save()
+        update_dossiers_in_box_status_and_sector(instance)
+    else:
+        raise ParseError(
+            {'status_error':
+                 f"Archive box should not be on this operation. Box current operation is {instance.status}"})
+    return instance

@@ -1,23 +1,39 @@
 from rest_framework.exceptions import ParseError
 
-from common_archive.models import Dossier, Sector
+from common_archive.models import Dossier
+from common_archive.statuses import DOSSIER_COMPLETION_AVAILABLE_STATUSES, DOSSIER_CHECKING_AVAILABLE_STATUSES
 
 
-def update_dossiers_in_box_status(archive_box, status):
-    Dossier.objects.filter(archive_box=archive_box).update(status=status)
+def update_dossiers_in_box_status_and_sector(archive_box):
+    Dossier.objects.filter(archive_box=archive_box).update(status=archive_box.status,
+                                                           current_sector=archive_box.current_sector)
 
 
-def update_dossier_box_and_status(instance, validated_data):
-    sector = validated_data.get('current_sector', None)
-    if instance.current_sector != sector:
+def update_dossier_under_completion(instance, validated_data):
+    if instance.status not in DOSSIER_COMPLETION_AVAILABLE_STATUSES:
         instance.archive_box = None
-        # instance.current_sector = Sector.objects.get(id=4)
-        instance.status = 'Wrong operation'
+        instance.status = 'Wrong operation/sector'
         instance.save()
         raise ParseError(
             {
-                'dossier_sector_error':
-                    f"Dossier should not be on this operation. Dossier current sector is {instance.current_sector}"})
+                'dossier_status_error':
+                    f"Dossier should not be on this operation. Dossier current status is {instance.status}"})
+    else:
+        instance.archive_box = validated_data.get('archive_box', None)
+        instance.status = validated_data.get('status', None)
+        instance.save()
+        return instance
+
+
+def update_dossier_under_checking(instance, validated_data):
+    if instance.status not in DOSSIER_CHECKING_AVAILABLE_STATUSES:
+        instance.archive_box = None
+        instance.status = 'Wrong operation/sector'
+        instance.save()
+        raise ParseError(
+            {
+                'dossier_status_error':
+                    f'Dossier should not be on this operation. Dossier current status is {instance.status}'})
     else:
         instance.archive_box = validated_data.get('archive_box', None)
         instance.status = validated_data.get('status', None)

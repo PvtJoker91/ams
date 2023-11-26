@@ -7,21 +7,27 @@ from rest_framework.response import Response
 from rest_framework.viewsets import ModelViewSet, GenericViewSet
 
 from common_archive.models import ArchiveBox, Dossier
+from common_archive.statuses import DOSSIER_REGISTRATION_AVAILABLE_STATUSES
 from registration.serializers import ABRegSerializer, DossierRegSerializer
 from services.validators import validate_dossier_barcode
 
 
-@extend_schema_view(create=extend_schema(summary='Create/open archive box', tags=['Registration']), )
-class ABRegView(ModelViewSet):
+@extend_schema_view(create=extend_schema(summary='Create/open/close archive box', tags=['Registration']),
+                    destroy=extend_schema(summary='Delete empty archive box', tags=['Registration']),
+                    )
+class ABRegView(mixins.CreateModelMixin,
+                mixins.DestroyModelMixin,
+                GenericViewSet):
     queryset = ArchiveBox.objects.all()
     permission_classes = [AllowAny]
     serializer_class = ABRegSerializer
     lookup_field = 'barcode'
-    http_method_names = ('post',)
+    http_method_names = ('post', 'delete')
 
 
-@extend_schema_view(create=extend_schema(summary='Dossier registration to archive box', tags=['Registration']),
-                    list=extend_schema(summary='Get dossiers', tags=['Registration']), )
+@extend_schema_view(
+    create=extend_schema(summary='Dossier registration to archive box', tags=['Registration']),
+    list=extend_schema(summary='Get dossiers', tags=['Registration']), )
 class DossierRegView(mixins.CreateModelMixin,
                      mixins.ListModelMixin,
                      GenericViewSet):
@@ -41,10 +47,10 @@ class DossierRegView(mixins.CreateModelMixin,
         queryset = self.filter_queryset(self.get_queryset())
         if queryset:
             instance = queryset.first()
-            if instance.current_sector.id != 1:
+            if instance.status not in DOSSIER_REGISTRATION_AVAILABLE_STATUSES:
                 raise ParseError(
-                    {'dossier_sector_error':
-                    f"Dossier should not be on this operation. Dossier current sector is {instance.current_sector}"})
+                    {'dossier_status_error':
+                    f"Dossier should not be on this operation. Dossier current status is {instance.status}"})
             elif instance.archive_box:
                 raise ParseError(
                     {'dossier_box_error':
