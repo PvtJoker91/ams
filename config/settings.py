@@ -43,6 +43,7 @@ INSTALLED_APPS += [
     'bank_clients',
     'registration',
     'logistic',
+    'orders',
 ]
 
 # after apps
@@ -142,7 +143,7 @@ DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 LANGUAGE_CODE = 'ru-RU'
 TIME_ZONE = 'UTC'
 USE_I18N = True
-USE_TZ = True
+USE_TZ = False
 
 ######################
 # STATIC AND MEDIA

@@ -25,6 +25,10 @@ class StorageShelf(models.Model):
     def __str__(self):
         return self.shelf_code
 
+    @property
+    def archive_box_number(self):
+        return self.archive_box.count()
+
 
 # def fill_storage():
 #     archive_code = '10'

@@ -1,11 +1,13 @@
 from django_filters.rest_framework import DjangoFilterBackend
 from drf_spectacular.utils import extend_schema, extend_schema_view
-from rest_framework import mixins
+from rest_framework import mixins, filters
 from rest_framework.exceptions import ParseError
 from rest_framework.permissions import AllowAny
 from rest_framework.response import Response
-from rest_framework.viewsets import ModelViewSet, GenericViewSet
+from rest_framework.viewsets import GenericViewSet
 
+from bank_clients.models import Contract
+from bank_clients.serializers import ContractSerializer
 from common_archive.models import ArchiveBox, Dossier
 from common_archive.statuses import DOSSIER_REGISTRATION_AVAILABLE_STATUSES
 from registration.serializers import ABRegSerializer, DossierRegSerializer
@@ -36,7 +38,7 @@ class DossierRegView(mixins.CreateModelMixin,
     serializer_class = DossierRegSerializer
     lookup_field = 'barcode'
     filter_backends = [DjangoFilterBackend]
-    filterset_fields = ['barcode',]
+    filterset_fields = ['barcode', ]
     http_method_names = ('get', 'post',)
 
     def list(self, request, *args, **kwargs):
@@ -50,7 +52,7 @@ class DossierRegView(mixins.CreateModelMixin,
             if instance.status not in DOSSIER_REGISTRATION_AVAILABLE_STATUSES:
                 raise ParseError(
                     {'dossier_status_error':
-                    f"Dossier should not be on this operation. Dossier current status is {instance.status}"})
+                         f"Dossier should not be on this operation. Dossier current status is {instance.status}"})
             elif instance.archive_box:
                 raise ParseError(
                     {'dossier_box_error':
@@ -58,3 +60,15 @@ class DossierRegView(mixins.CreateModelMixin,
 
         serializer = self.get_serializer(queryset, many=True)
         return Response(serializer.data)
+
+
+@extend_schema_view(list=extend_schema(summary='Contracts search', tags=['Registration']), )
+class ContractSearchView(mixins.ListModelMixin, GenericViewSet):
+    queryset = Contract.objects.all().select_related('product').select_related('client')
+    serializer_class = ContractSerializer
+    permission_classes = [AllowAny]
+    filter_backends = [DjangoFilterBackend, filters.SearchFilter]
+    filterset_fields = ['client__last_name', 'client__name', 'client__middle_name', 'client__passport',
+                        'contract_number']
+    search_fields = ['client__last_name', 'client__name', 'client__middle_name', 'client__passport',
+                     'contract_number']

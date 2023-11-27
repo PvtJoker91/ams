@@ -1,21 +1,21 @@
-from rest_framework.serializers import ModelSerializer
+from rest_framework import serializers
 
 from bank_clients.models import Contract, Client, Product
 
 
-class ClientSerializer(ModelSerializer):
+class ClientSerializer(serializers.ModelSerializer):
     class Meta:
         model = Client
         fields = '__all__'
 
 
-class ProductSerializer(ModelSerializer):
+class ProductSerializer(serializers.ModelSerializer):
     class Meta:
         model = Product
         fields = '__all__'
 
 
-class ContractSerializer(ModelSerializer):
+class ContractSerializer(serializers.ModelSerializer):
     client = ClientSerializer()
     product = ProductSerializer()
 

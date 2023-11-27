@@ -37,7 +37,7 @@ class SectorAdmin(admin.ModelAdmin):
 
 @admin.register(StorageShelf)
 class StorageShelfAdmin(admin.ModelAdmin):
-    list_display = 'shelf_code', 'archive'
+    list_display = 'shelf_code', 'archive', 'archive_box_number'
     ordering = 'shelf_code',
     inlines = (ArchiveBoxInline,)
 
