@@ -6,9 +6,8 @@ from rest_framework.viewsets import GenericViewSet
 
 from common_archive.models import Dossier
 from common_archive.views.mixins import ExtendedGenericViewSet
-from orders import serializers
 from orders.models import DossierOrder
-from orders.serializers import DossierSearchSerializer
+from orders.serializers.api import orders
 
 
 @extend_schema_view(
@@ -19,7 +18,7 @@ class DossierSearchView(mixins.ListModelMixin,
                         mixins.RetrieveModelMixin,
                         GenericViewSet):
     queryset = Dossier.objects.all().select_related('contract')
-    serializer_class = DossierSearchSerializer
+    serializer_class = orders.DossierSearchSerializer
     permission_classes = [AllowAny]
     http_method_names = ('get',)
     filter_backends = [DjangoFilterBackend, filters.SearchFilter]
@@ -31,7 +30,7 @@ class DossierSearchView(mixins.ListModelMixin,
         'contract__client__middle_name',
         'contract__client__passport',
         'contract__client__birthday',
-        'contract__product__name',
+        'contract__product__id',
 
     ]
     search_fields = [
@@ -53,12 +52,12 @@ class OrderView(mixins.ListModelMixin,
                 mixins.UpdateModelMixin,
                 ExtendedGenericViewSet):
     queryset = DossierOrder.objects.all().prefetch_related('dossiers')
-    serializer_class = serializers.OrderListSerializer
+    serializer_class = orders.OrderListSerializer
     multi_serializer_class = {
-        'list': serializers.OrderListSerializer,
-        'retrieve': serializers.OrderRetrieveSerializer,
-        'create': serializers.OrderCreateSerializer,
-        'partial_update': serializers.OrderUpdateSerializer,
+        'list': orders.OrderListSerializer,
+        'retrieve': orders.OrderRetrieveSerializer,
+        'create': orders.OrderCreateSerializer,
+        'partial_update': orders.OrderUpdateSerializer,
     }
     http_method_names = ('get', 'post', 'patch')
     permission_classes = [AllowAny]
