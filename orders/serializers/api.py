@@ -7,6 +7,8 @@ from orders.models import DossierOrder
 
 class DossierSearchSerializer(DossierSerializer):
     contract = ContractSerializer()
+    class Meta:
+        fields = ('barcode', 'contract')
 
 
 class OrderCreateSerializer(serializers.ModelSerializer):

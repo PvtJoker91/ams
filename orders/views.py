@@ -11,26 +11,33 @@ from orders.models import DossierOrder
 from orders.serializers import DossierSearchSerializer
 
 
-@extend_schema_view(list=extend_schema(summary='Dossiers search', tags=['Orders']), )
-class DossierSearchView(mixins.ListModelMixin, GenericViewSet):
+@extend_schema_view(
+    list=extend_schema(summary='Dossiers list', tags=['Orders']),
+    retrieve=extend_schema(summary='Dossier detail', tags=['Orders']),
+                    )
+class DossierSearchView(mixins.ListModelMixin,
+                        mixins.RetrieveModelMixin,
+                        GenericViewSet):
     queryset = Dossier.objects.all().select_related('contract')
     serializer_class = DossierSearchSerializer
     permission_classes = [AllowAny]
+    http_method_names = ('get',)
     filter_backends = [DjangoFilterBackend, filters.SearchFilter]
     filterset_fields = [
         'barcode',
+        'contract__contract_number',
         'contract__client__last_name',
         'contract__client__name',
         'contract__client__middle_name',
         'contract__client__passport',
-        'contract__contract_number'
+        'contract__client__birthday',
+        'contract__product__name',
+
     ]
     search_fields = [
-        'contract__client__last_name',
-        'contract__client__name',
-        'contract__client__middle_name',
+        'barcode',
+        'contract__contract_number',
         'contract__client__passport',
-        'contract__contract_number'
     ]
 
 
@@ -38,7 +45,7 @@ class DossierSearchView(mixins.ListModelMixin, GenericViewSet):
     list=extend_schema(summary='Orders list', tags=['Orders']),
     create=extend_schema(summary='Create order', tags=['Orders']),
     partial_update=extend_schema(summary='Update order', tags=['Orders']),
-    retrieve=extend_schema(summary='Get order detail', tags=['Orders']),
+    retrieve=extend_schema(summary='Order detail', tags=['Orders']),
 )
 class OrderView(mixins.ListModelMixin,
                 mixins.RetrieveModelMixin,
