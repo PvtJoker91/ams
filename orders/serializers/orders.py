@@ -1,17 +1,6 @@
 from rest_framework import serializers
 
-from bank_clients.serializers import ContractSerializer
-from common_archive.models import Dossier
-from common_archive.serializers import DossierSerializer
 from orders.models import DossierOrder
-
-
-class DossierSearchSerializer(DossierSerializer):
-    contract = ContractSerializer()
-
-    class Meta:
-        model = Dossier
-        fields = ('barcode', 'contract')
 
 
 class OrderCreateSerializer(serializers.ModelSerializer):

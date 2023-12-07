@@ -1,6 +1,6 @@
 from django.contrib import admin
 
-from common_archive.models import Archive, StorageShelf, ArchiveBox, Dossier, Sector, Registry
+from archive.models import Archive, StorageShelf, ArchiveBox, Dossier, Sector, Registry
 
 
 ##############################

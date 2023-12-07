@@ -1,6 +1,6 @@
 from rest_framework.viewsets import GenericViewSet
 
-from common_archive import roles
+from archive import roles
 
 
 # from common.constants import roles

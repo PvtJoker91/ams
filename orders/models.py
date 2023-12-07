@@ -2,44 +2,44 @@ from django.contrib.auth.models import User
 from django.db import models
 from django.utils import timezone
 
-from common_archive.models import Dossier
-
-SERVICE_TYPES = (
-    ('1', 'Full scanning'),
-    ('2', 'Scanning by documents'),
-    ('3', 'Temporary issuance'),
-    ('4', 'Unrecoverable issuance')
-)
-
-URGENCY_TYPES = (
-    ('40', 'Standard - 40 w.h.'),
-    ('16', 'Increased - 16 w.h.'),
-    ('8', 'High - 8 w.h.'),
-)
-
-ORDER_STATUSES = (
-    ('1', 'Creation'),
-    ('2', 'Sent for processing'),
-    ('3', 'Accepted'),
-    ('4', 'Rejected'),
-    ('5', 'Sent for selection'),
-    ('6', 'On selection'),
-    ('7', 'Sent for scanning'),
-    ('8', 'On scanning'),
-    ('9', 'Complete'),
-)
+from archive.models import Dossier
 
 
 class DossierOrder(models.Model):
+    SERVICE_TYPES = (
+        ('full_scanning', 'Full scanning'),
+        ('scanning_by_documents', 'Scanning by documents'),
+        ('temporary_issuance', 'Temporary issuance'),
+        ('unrecoverable_issuance', 'Unrecoverable issuance')
+    )
+
+    URGENCY_HOURS = (
+        ('40', 'Standard - 40 w.h.'),
+        ('16', 'Increased - 16 w.h.'),
+        ('8', 'High - 8 w.h.'),
+    )
+
+    ORDER_STATUSES = (
+        ('creation', 'Creation'),
+        ('sent_for_processing', 'Sent for processing'),
+        ('accepted', 'Accepted'),
+        ('rejected', 'Rejected'),
+        ('sent_for_selection', 'Sent for selection'),
+        ('on_selection', 'On selection'),
+        ('sent_for_scanning', 'Sent for scanning'),
+        ('on_scanning', 'On scanning'),
+        ('complete', 'Complete'),
+    )
+
     status = models.CharField(choices=ORDER_STATUSES)
     creator = models.ForeignKey(User, on_delete=models.SET_NULL, related_name='orders', null=True)
     client = models.CharField(max_length=50)
     client_department = models.CharField(max_length=100)
     service = models.CharField(choices=SERVICE_TYPES)
-    urgency = models.CharField(choices=URGENCY_TYPES)
+    urgency = models.CharField(choices=URGENCY_HOURS)
     description = models.TextField()
     time_create = models.DateTimeField(auto_now=True)
-    dossiers = models.ManyToManyField(Dossier, related_name='orders')
+    dossiers = models.ManyToManyField(Dossier, related_name='orders', blank=True)
 
     def __str__(self):
         return f'{self.service} {self.client_department}'
@@ -68,4 +68,3 @@ class DossierOrder(models.Model):
     @property
     def is_expired(self):
         return self.deadline < timezone.now()
-

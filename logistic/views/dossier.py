@@ -4,8 +4,8 @@ from rest_framework.exceptions import ParseError
 from rest_framework.permissions import AllowAny
 from rest_framework.viewsets import GenericViewSet
 
-from common_archive.models import Dossier
-from common_archive.statuses import DOSSIER_CHECKING_AVAILABLE_STATUSES
+from archive.models import Dossier
+from archive.statuses import DOSSIER_CHECKING_AVAILABLE_STATUSES
 from logistic.serializers.dossier import DossierCheckSerializer, DossierCompletionSerializer
 from services.validators import validate_dossier_barcode
 

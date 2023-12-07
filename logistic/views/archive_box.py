@@ -3,7 +3,7 @@ from rest_framework import mixins
 from rest_framework.permissions import AllowAny
 from rest_framework.viewsets import GenericViewSet
 
-from common_archive.models import ArchiveBox
+from archive.models import ArchiveBox
 from logistic.serializers.archive_box import ABCompletionSerializer, ABPlacementSerializer, ABCheckSerializer
 
 

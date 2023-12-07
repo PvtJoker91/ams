@@ -8,8 +8,8 @@ from rest_framework.viewsets import GenericViewSet
 
 from bank_clients.models import Contract
 from bank_clients.serializers import ContractSerializer
-from common_archive.models import ArchiveBox, Dossier
-from common_archive.statuses import DOSSIER_REGISTRATION_AVAILABLE_STATUSES
+from archive.models import ArchiveBox, Dossier
+from archive.statuses import DOSSIER_REGISTRATION_AVAILABLE_STATUSES
 from registration.serializers import ABRegSerializer, DossierRegSerializer
 from services.validators import validate_dossier_barcode
 

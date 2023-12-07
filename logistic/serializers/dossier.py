@@ -1,5 +1,5 @@
-from common_archive.models import Dossier
-from common_archive.serializers import DossierSerializer
+from archive.models import Dossier
+from archive.serializers import DossierSerializer
 from services.dossiers import update_dossier_under_completion, update_dossier_under_checking
 
 

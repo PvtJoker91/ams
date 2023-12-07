@@ -1,5 +1,5 @@
-from common_archive.models import ArchiveBox, Dossier
-from common_archive.serializers import ABSerializer, DossierSerializer
+from archive.models import ArchiveBox, Dossier
+from archive.serializers import ABSerializer, DossierSerializer
 from services.archive_box import create_or_update_box_under_registration
 
 

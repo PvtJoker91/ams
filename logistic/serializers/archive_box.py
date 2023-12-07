@@ -1,5 +1,5 @@
-from common_archive.models import ArchiveBox
-from common_archive.serializers import ABSerializer, ShelfSerializer
+from archive.models import ArchiveBox
+from archive.serializers import ABSerializer, ShelfSerializer
 from logistic.serializers.dossier import DossierCompletionSerializer, DossierCheckSerializer
 from services.archive_box import update_box_under_placement, create_or_update_box_under_completion, \
     update_box_under_checking

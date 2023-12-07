@@ -1,6 +1,7 @@
 from rest_framework import serializers
 
-from common_archive.models import ArchiveBox, Dossier, StorageShelf
+from bank_clients.serializers import ContractSerializer
+from archive.models import ArchiveBox, Dossier, StorageShelf
 from services.validators import validate_ab_barcode, validate_dossier_barcode
 
 
@@ -32,3 +33,11 @@ class ShelfSerializer(serializers.ModelSerializer):
     class Meta:
         model = StorageShelf
         fields = ('shelf_code',)
+
+
+class DossierSearchSerializer(DossierSerializer):
+    contract = ContractSerializer()
+
+    class Meta:
+        model = Dossier
+        fields = ('id', 'barcode', 'contract', 'status')

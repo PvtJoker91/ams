@@ -11,3 +11,4 @@ class DossierOrderAdmin(admin.ModelAdmin):
         'deadline', 'is_expired',
     )
     filter_horizontal = 'dossiers',
+

@@ -1,7 +1,7 @@
 from rest_framework.exceptions import ParseError
 
-from common_archive.models import Dossier
-from common_archive.statuses import DOSSIER_COMPLETION_AVAILABLE_STATUSES, DOSSIER_CHECKING_AVAILABLE_STATUSES
+from archive.models import Dossier
+from archive.statuses import DOSSIER_COMPLETION_AVAILABLE_STATUSES, DOSSIER_CHECKING_AVAILABLE_STATUSES
 
 
 def update_dossiers_in_box_status_and_sector(archive_box):

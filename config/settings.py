@@ -18,6 +18,7 @@ ALLOWED_HOSTS = env.str('ALLOWED_HOSTS', default='').split(' ')
 
 INTERNAL_IPS = ['127.0.0.1',]
 
+
 # base
 INSTALLED_APPS = [
     'django.contrib.admin',
@@ -39,7 +40,7 @@ INSTALLED_APPS += [
 # apps
 INSTALLED_APPS += [
     'api',
-    'common_archive',
+    'archive',
     'bank_clients',
     'registration',
     'logistic',
@@ -60,9 +61,11 @@ MIDDLEWARE = [
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
-    'silk.middleware.SilkyMiddleware',
     'corsheaders.middleware.CorsMiddleware',
+    'silk.middleware.SilkyMiddleware',
+
 ]
+
 
 ROOT_URLCONF = 'config.urls'
 
@@ -158,6 +161,9 @@ MEDIA_ROOT = os.path.join(BASE_DIR, 'media/')
 # CORS HEADERS
 ######################
 CORS_ORIGIN_ALLOW_ALL = True
+CORS_ALLOWED_ORIGINS = [
+    'http://localhost:5173',
+]
 CORS_ALLOW_CREDENTIALS = True
 CORS_ALLOW_HEADERS = ['*']
 CSRF_COOKIE_SECURE = False
