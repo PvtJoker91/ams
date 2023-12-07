@@ -4,10 +4,10 @@ from rest_framework.permissions import AllowAny
 from rest_framework.viewsets import GenericViewSet
 
 from archive.models import ArchiveBox
-from logistic.serializers.archive_box import ABCompletionSerializer, ABPlacementSerializer, ABCheckSerializer
+from logistics.serializers.archive_box import ABCompletionSerializer, ABPlacementSerializer, ABCheckSerializer
 
 
-@extend_schema_view(partial_update=extend_schema(summary='Box checking', tags=['Logistic']), )
+@extend_schema_view(partial_update=extend_schema(summary='Box checking', tags=['Logistics']), )
 class ABCheckView(mixins.UpdateModelMixin, GenericViewSet):
     queryset = ArchiveBox.objects.all().select_related('current_sector')
     serializer_class = ABCheckSerializer
@@ -16,7 +16,7 @@ class ABCheckView(mixins.UpdateModelMixin, GenericViewSet):
     http_method_names = ('patch',)
 
 
-@extend_schema_view(partial_update=extend_schema(summary='Place archive boxes on storage', tags=['Logistic']), )
+@extend_schema_view(partial_update=extend_schema(summary='Place archive boxes on storage', tags=['Logistics']), )
 class ABPlacementView(mixins.UpdateModelMixin, GenericViewSet):
     queryset = ArchiveBox.objects.all().select_related('storage_address').select_related('current_sector')
     serializer_class = ABPlacementSerializer
@@ -26,8 +26,8 @@ class ABPlacementView(mixins.UpdateModelMixin, GenericViewSet):
 
 
 @extend_schema_view(
-    create=extend_schema(summary='Open/create archive box to complete', tags=['Logistic']),
-    destroy=extend_schema(summary='Delete empty archive box', tags=['Logistic']),
+    create=extend_schema(summary='Open/create archive box to complete', tags=['Logistics']),
+    destroy=extend_schema(summary='Delete empty archive box', tags=['Logistics']),
                     )
 class ABCompletionView(mixins.CreateModelMixin,
                        mixins.DestroyModelMixin,

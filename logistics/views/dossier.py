@@ -6,13 +6,13 @@ from rest_framework.viewsets import GenericViewSet
 
 from archive.models import Dossier
 from archive.statuses import DOSSIER_CHECKING_AVAILABLE_STATUSES
-from logistic.serializers.dossier import DossierCheckSerializer, DossierCompletionSerializer
+from logistics.serializers.dossier import DossierCheckSerializer, DossierCompletionSerializer
 from services.validators import validate_dossier_barcode
 
 
 @extend_schema_view(
-    partial_update=extend_schema(summary='Checking // Update dossier box, status, current_sector', tags=['Logistic']),
-    retrieve=extend_schema(summary='Get dossier', tags=['Logistic']), )
+    partial_update=extend_schema(summary='Checking // Update dossier box, status, current_sector', tags=['Logistics']),
+    retrieve=extend_schema(summary='Get dossier', tags=['Logistics']), )
 class DossierCheckView(mixins.UpdateModelMixin,
                        mixins.RetrieveModelMixin,
                        GenericViewSet):
@@ -43,7 +43,7 @@ class DossierCheckView(mixins.UpdateModelMixin,
 
 
 @extend_schema_view(
-    partial_update=extend_schema(summary='Completion // Update dossier box, status, current_sector', tags=['Logistic']),
+    partial_update=extend_schema(summary='Completion // Update dossier box, status, current_sector', tags=['Logistics']),
 )
 class DossierCompletionView(mixins.UpdateModelMixin,
                             GenericViewSet):

@@ -30,22 +30,22 @@ class StorageShelf(models.Model):
         return self.archive_box.count()
 
 
-def fill_storage():
-    archive_code = '10'
-    levels = ['01', '02']
-    rooms = ['01', '02']
-    rows = ['A', 'B', 'C', 'D']
-    racks = ['01', '02', '03']
-    shelfs = ['01', '02', '03']
-
-    for level in levels:
-        for room in rooms:
-            for row in rows:
-                for rack in racks:
-                    for shelf in shelfs:
-                        StorageShelf.objects.create(archive_id=Archive.objects.all()[0].id,
-                                                    shelf_code=f'{archive_code}.{level}.{room}.-{row}.{rack}.{shelf}')
-    return
+# def fill_storage():
+#     archive_code = '10'
+#     levels = ['01', '02']
+#     rooms = ['01', '02']
+#     rows = ['A', 'B', 'C', 'D']
+#     racks = ['01', '02', '03']
+#     shelfs = ['01', '02', '03']
+#
+#     for level in levels:
+#         for room in rooms:
+#             for row in rows:
+#                 for rack in racks:
+#                     for shelf in shelfs:
+#                         StorageShelf.objects.create(archive_id=Archive.objects.all()[0].id,
+#                                                     shelf_code=f'{archive_code}.{level}.{room}.-{row}.{rack}.{shelf}')
+#     return
 
 
 class Sector(models.Model):

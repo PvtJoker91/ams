@@ -43,7 +43,7 @@ INSTALLED_APPS += [
     'archive',
     'bank_clients',
     'registration',
-    'logistic',
+    'logistics',
     'orders',
 ]
 
