@@ -1,11 +1,11 @@
 from drf_spectacular.utils import extend_schema_view, extend_schema
 from rest_framework import mixins
 from rest_framework.exceptions import ParseError
-from rest_framework.permissions import AllowAny
 from rest_framework.viewsets import GenericViewSet
 
 from archive.models import Dossier
 from archive.statuses import DOSSIER_CHECKING_AVAILABLE_STATUSES
+from logistics.permissions import IsInLogisticsGroup
 from logistics.serializers.dossier import DossierCheckSerializer, DossierCompletionSerializer
 from services.validators import validate_dossier_barcode
 
@@ -18,7 +18,7 @@ class DossierCheckView(mixins.UpdateModelMixin,
                        GenericViewSet):
     queryset = Dossier.objects.all().select_related('current_sector')
     serializer_class = DossierCheckSerializer
-    permission_classes = [AllowAny]
+    permission_classes = [IsInLogisticsGroup]
     lookup_field = 'barcode'
     http_method_names = ('get', 'patch',)
 
@@ -49,7 +49,7 @@ class DossierCompletionView(mixins.UpdateModelMixin,
                             GenericViewSet):
     queryset = Dossier.objects.all().select_related('current_sector')
     serializer_class = DossierCompletionSerializer
-    permission_classes = [AllowAny]
+    permission_classes = [IsInLogisticsGroup]
     lookup_field = 'barcode'
     http_method_names = ('patch',)
 

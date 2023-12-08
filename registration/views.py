@@ -2,7 +2,6 @@ from django_filters.rest_framework import DjangoFilterBackend
 from drf_spectacular.utils import extend_schema, extend_schema_view
 from rest_framework import mixins, filters
 from rest_framework.exceptions import ParseError
-from rest_framework.permissions import AllowAny
 from rest_framework.response import Response
 from rest_framework.viewsets import GenericViewSet
 
@@ -10,6 +9,7 @@ from bank_clients.models import Contract
 from bank_clients.serializers import ContractSerializer
 from archive.models import ArchiveBox, Dossier
 from archive.statuses import DOSSIER_REGISTRATION_AVAILABLE_STATUSES
+from registration.permissions import IsInRegistrationGroup
 from registration.serializers import ABRegSerializer, DossierRegSerializer
 from services.validators import validate_dossier_barcode
 
@@ -21,7 +21,7 @@ class ABRegView(mixins.CreateModelMixin,
                 mixins.DestroyModelMixin,
                 GenericViewSet):
     queryset = ArchiveBox.objects.all()
-    permission_classes = [AllowAny]
+    permission_classes = [IsInRegistrationGroup]
     serializer_class = ABRegSerializer
     lookup_field = 'barcode'
     http_method_names = ('post', 'delete')
@@ -34,7 +34,7 @@ class DossierRegView(mixins.CreateModelMixin,
                      mixins.ListModelMixin,
                      GenericViewSet):
     queryset = Dossier.objects.all().select_related('current_sector')
-    permission_classes = [AllowAny]
+    permission_classes = [IsInRegistrationGroup]
     serializer_class = DossierRegSerializer
     lookup_field = 'barcode'
     filter_backends = [DjangoFilterBackend]
@@ -66,7 +66,7 @@ class DossierRegView(mixins.CreateModelMixin,
 class ContractSearchView(mixins.ListModelMixin, GenericViewSet):
     queryset = Contract.objects.all().select_related('product').select_related('client')
     serializer_class = ContractSerializer
-    permission_classes = [AllowAny]
+    permission_classes = [IsInRegistrationGroup]
     filter_backends = [DjangoFilterBackend, filters.SearchFilter]
     filterset_fields = ['client__last_name', 'client__name', 'client__middle_name', 'client__passport',
                         'contract_number']

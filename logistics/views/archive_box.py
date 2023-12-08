@@ -1,9 +1,9 @@
 from drf_spectacular.utils import extend_schema_view, extend_schema
 from rest_framework import mixins
-from rest_framework.permissions import AllowAny
 from rest_framework.viewsets import GenericViewSet
 
 from archive.models import ArchiveBox
+from logistics.permissions import IsInLogisticsGroup
 from logistics.serializers.archive_box import ABCompletionSerializer, ABPlacementSerializer, ABCheckSerializer
 
 
@@ -11,7 +11,7 @@ from logistics.serializers.archive_box import ABCompletionSerializer, ABPlacemen
 class ABCheckView(mixins.UpdateModelMixin, GenericViewSet):
     queryset = ArchiveBox.objects.all().select_related('current_sector')
     serializer_class = ABCheckSerializer
-    permission_classes = [AllowAny]
+    permission_classes = [IsInLogisticsGroup]
     lookup_field = 'barcode'
     http_method_names = ('patch',)
 
@@ -20,7 +20,7 @@ class ABCheckView(mixins.UpdateModelMixin, GenericViewSet):
 class ABPlacementView(mixins.UpdateModelMixin, GenericViewSet):
     queryset = ArchiveBox.objects.all().select_related('storage_address').select_related('current_sector')
     serializer_class = ABPlacementSerializer
-    permission_classes = [AllowAny]
+    permission_classes = [IsInLogisticsGroup]
     lookup_field = 'barcode'
     http_method_names = ('patch',)
 
@@ -34,7 +34,7 @@ class ABCompletionView(mixins.CreateModelMixin,
                        GenericViewSet):
     queryset = ArchiveBox.objects.all().select_related('current_sector')
     serializer_class = ABCompletionSerializer
-    permission_classes = [AllowAny]
+    permission_classes = [IsInLogisticsGroup]
     lookup_field = 'barcode'
     http_method_names = ('post', 'delete')
 

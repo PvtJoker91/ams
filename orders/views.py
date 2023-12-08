@@ -1,9 +1,9 @@
 from drf_spectacular.utils import extend_schema, extend_schema_view
 from rest_framework import mixins
-from rest_framework.permissions import AllowAny
 
 from archive.views.mixins import ExtendedGenericViewSet
 from orders.models import DossierOrder
+from orders.permissions import IsInOrdersGroup
 from orders.serializers import orders
 
 
@@ -27,4 +27,4 @@ class OrderView(mixins.ListModelMixin,
         'partial_update': orders.OrderUpdateSerializer,
     }
     http_method_names = ('get', 'post', 'patch')
-    permission_classes = [AllowAny]
+    permission_classes = [IsInOrdersGroup]

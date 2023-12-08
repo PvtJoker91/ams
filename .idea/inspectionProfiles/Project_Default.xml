@@ -5,8 +5,9 @@
     <inspection_tool class="PyPackageRequirementsInspection" enabled="true" level="WARNING" enabled_by_default="true">
       <option name="ignoredPackages">
         <value>
-          <list size="1">
+          <list size="2">
             <item index="0" class="java.lang.String" itemvalue="environ" />
+            <item index="1" class="java.lang.String" itemvalue="flufl.lock" />
           </list>
         </value>
       </option>
@@ -28,6 +29,8 @@
           <option value="store.models.UserBookRelation.*" />
           <option value="store.models.Author.*" />
           <option value="store.models.BookCategory.*" />
+          <option value="common_archive.models.ArchiveBox.*" />
+          <option value="common_archive.statuses.REGISTRATION_AVAILEBLE" />
         </list>
       </option>
     </inspection_tool>

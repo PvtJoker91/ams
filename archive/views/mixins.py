@@ -1,9 +1,7 @@
 from rest_framework.viewsets import GenericViewSet
 
-from archive import roles
+from services import roles
 
-
-# from common.constants import roles
 
 
 class ExtendedView:
