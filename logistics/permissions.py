@@ -1,6 +1,6 @@
 from rest_framework.permissions import IsAuthenticated
 
-from services.permissions import LOGISTICS_PERMISSION_GROUP
+from common.services.permissions import LOGISTICS_PERMISSION_GROUP
 
 
 class IsInLogisticsGroup(IsAuthenticated):

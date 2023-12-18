@@ -3,11 +3,11 @@ from rest_framework.exceptions import ParseError
 from archive.models import StorageShelf, ArchiveBox
 from archive.statuses import AB_CHECKING_AVAILABLE_STATUSES, AB_COMPLETION_AVAILABLE_STATUSES, \
     AB_PLACEMENT_AVAILABLE_STATUSES, AB_REGISTRATION_AVAILABLE_STATUSES
-from services.dossiers import update_dossiers_in_box_status_and_sector
+from common.services.dossiers import update_dossiers_in_box_status_and_sector
 
 
 def create_or_update_box_under_registration(validated_data):
-    if ArchiveBox.objects.filter(barcode=validated_data.get('barcode')):
+    if ArchiveBox.objects.filter(barcode=validated_data.get('barcode')).exists():
         archive_box = ArchiveBox.objects.get(barcode=validated_data.get('barcode'))
         if archive_box.status in AB_REGISTRATION_AVAILABLE_STATUSES:
             archive_box.status = validated_data.get('status', None)

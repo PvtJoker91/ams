@@ -16,9 +16,6 @@ class ProductSerializer(serializers.ModelSerializer):
 
 
 class ContractSerializer(serializers.ModelSerializer):
-    client = ClientSerializer()
-    product = ProductSerializer()
-
     class Meta:
         model = Contract
         fields = '__all__'

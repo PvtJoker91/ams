@@ -48,6 +48,8 @@ class DossierOrder(models.Model):
 
     @property
     def deadline(self):
+        if not self.time_create:
+            return None
         deadline_start = self.time_create
         workday_start = deadline_start.replace(hour=9, minute=0, second=0)
         workday_end = deadline_start.replace(hour=17, minute=0, second=0)
@@ -69,4 +71,4 @@ class DossierOrder(models.Model):
 
     @property
     def is_expired(self):
-        return self.deadline < timezone.now()
+        return self.deadline < timezone.now() if self.deadline else None

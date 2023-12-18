@@ -1,6 +1,6 @@
 from archive.models import ArchiveBox, Dossier
-from archive.serializers import ABSerializer, DossierSerializer
-from services.archive_box import create_or_update_box_under_registration
+from archive.serializers.nested import ABSerializer, DossierSerializer
+from common.services.archive_box import create_or_update_box_under_registration
 
 
 class DossierRegSerializer(DossierSerializer):

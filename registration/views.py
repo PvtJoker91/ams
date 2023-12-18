@@ -1,17 +1,15 @@
 from django_filters.rest_framework import DjangoFilterBackend
 from drf_spectacular.utils import extend_schema, extend_schema_view
-from rest_framework import mixins, filters
+from rest_framework import mixins
 from rest_framework.exceptions import ParseError
 from rest_framework.response import Response
 from rest_framework.viewsets import GenericViewSet
 
-from bank_clients.models import Contract
-from bank_clients.serializers import ContractSerializer
 from archive.models import ArchiveBox, Dossier
 from archive.statuses import DOSSIER_REGISTRATION_AVAILABLE_STATUSES
+from common.services.validators import validate_dossier_barcode
 from registration.permissions import IsInRegistrationGroup
 from registration.serializers import ABRegSerializer, DossierRegSerializer
-from services.validators import validate_dossier_barcode
 
 
 @extend_schema_view(create=extend_schema(summary='Create/open/close archive box', tags=['Registration']),
@@ -60,15 +58,3 @@ class DossierRegView(mixins.CreateModelMixin,
 
         serializer = self.get_serializer(queryset, many=True)
         return Response(serializer.data)
-
-
-@extend_schema_view(list=extend_schema(summary='Contracts search', tags=['Registration']), )
-class ContractSearchView(mixins.ListModelMixin, GenericViewSet):
-    queryset = Contract.objects.all().select_related('product').select_related('client')
-    serializer_class = ContractSerializer
-    permission_classes = [IsInRegistrationGroup]
-    filter_backends = [DjangoFilterBackend, filters.SearchFilter]
-    filterset_fields = ['client__last_name', 'client__name', 'client__middle_name', 'client__passport',
-                        'contract_number']
-    search_fields = ['client__last_name', 'client__name', 'client__middle_name', 'client__passport',
-                     'contract_number']

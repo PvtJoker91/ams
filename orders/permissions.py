@@ -1,6 +1,6 @@
 from rest_framework.permissions import IsAuthenticated
 
-from services.permissions import ORDERS_PERMISSION_GROUP
+from common.services.permissions import ORDERS_PERMISSION_GROUP
 
 
 class IsInOrdersGroup(IsAuthenticated):

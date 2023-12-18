@@ -7,7 +7,7 @@ from archive.models import Dossier
 from archive.statuses import DOSSIER_CHECKING_AVAILABLE_STATUSES
 from logistics.permissions import IsInLogisticsGroup
 from logistics.serializers.dossier import DossierCheckSerializer, DossierCompletionSerializer
-from services.validators import validate_dossier_barcode
+from common.services.validators import validate_dossier_barcode
 
 
 @extend_schema_view(
