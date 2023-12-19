@@ -19,7 +19,7 @@ class DossierView(mixins.ListModelMixin,
     serializer_class = DossierSearchSerializer
     permission_classes = [IsAuthenticated]
     http_method_names = ('get',)
-    filter_backends = [DjangoFilterBackend, filters.SearchFilter]
+    filter_backends = (DjangoFilterBackend, filters.OrderingFilter, filters.SearchFilter)
     filterset_fields = [
         'barcode',
         'contract__contract_number',
@@ -36,3 +36,4 @@ class DossierView(mixins.ListModelMixin,
         'contract__contract_number',
         'contract__client__passport',
     ]
+    ordering = ('contract__client__last_name', 'contract__product__name',)

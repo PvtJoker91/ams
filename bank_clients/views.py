@@ -6,12 +6,13 @@ from rest_framework.viewsets import GenericViewSet
 
 from bank_clients.models import Contract
 from bank_clients.serializers.search import ContractSearchSerializer
+from common.pagination import CustomPagination
 
 
 @extend_schema_view(list=extend_schema(summary='Contracts search', tags=['Clients']), )
 class ContractView(mixins.ListModelMixin,
                    GenericViewSet):
-    queryset = Contract.objects.all().select_related('product').select_related('client')
+    queryset = Contract.objects.all().select_related('product').select_related('client').order_by('id')
     serializer_class = ContractSearchSerializer
     permission_classes = [IsAuthenticated]
     filter_backends = [DjangoFilterBackend, filters.SearchFilter]

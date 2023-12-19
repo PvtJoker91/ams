@@ -24,6 +24,7 @@ class DossierOrder(models.Model):
     ORDER_STATUSES = (
         ('creation', 'Creation'),
         ('sent_for_processing', 'Sent for processing'),
+        ('cancelled', 'Cancelled'),
         ('accepted', 'Accepted'),
         ('rejected', 'Rejected'),
         ('sent_for_selection', 'Sent for selection'),
@@ -40,7 +41,9 @@ class DossierOrder(models.Model):
     service = models.CharField(choices=SERVICE_TYPES)
     urgency = models.CharField(choices=URGENCY_HOURS)
     description = models.TextField()
-    time_create = models.DateTimeField(auto_now=True)
+    close_reason = models.TextField(null=True, blank=True)
+    time_create = models.DateTimeField(null=True, blank=True)
+    time_close = models.DateTimeField(null=True, blank=True)
     dossiers = models.ManyToManyField(Dossier, related_name='orders', blank=True)
 
     def __str__(self):
