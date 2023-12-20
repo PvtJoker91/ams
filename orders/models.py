@@ -4,8 +4,8 @@ from django.utils import timezone
 
 from archive.models import Dossier
 
-
 User = get_user_model()
+
 
 class DossierOrder(models.Model):
     SERVICE_TYPES = (
