@@ -41,13 +41,13 @@ INSTALLED_APPS += [
 # apps
 INSTALLED_APPS += [
     'api',
+    'common',
     'accounts',
     'archive',
     'bank_clients',
     'registration',
     'logistics',
     'orders',
-    'common',
 ]
 
 # after apps
@@ -56,15 +56,10 @@ INSTALLED_APPS += [
     'silk',
 ]
 
-
-
 # Custom user model
 AUTH_USER_MODEL = 'accounts.AMSUser'
 AUTH_GROUP_MODEL = 'accounts.AMSGroup'
 
-# Custom backend
-# AUTHENTICATION_BACKENDS = ('accounts.backends.CustomAuthBackend',)
-AUTHENTICATION_BACKENDS = ('django.contrib.auth.backends.ModelBackend',)
 
 
 

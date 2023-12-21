@@ -6,7 +6,6 @@ from rest_framework.viewsets import GenericViewSet
 
 from bank_clients.models import Contract
 from bank_clients.serializers.search import ContractSearchSerializer
-from common.pagination import CustomPagination
 
 
 @extend_schema_view(list=extend_schema(summary='Contracts search', tags=['Clients']), )

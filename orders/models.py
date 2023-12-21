@@ -7,7 +7,7 @@ from archive.models import Dossier
 User = get_user_model()
 
 
-class DossierOrder(models.Model):
+class DossiersOrder(models.Model):
     SERVICE_TYPES = (
         ('full_scanning', 'Full scanning'),
         ('scanning_by_documents', 'Scanning by documents'),
@@ -26,7 +26,6 @@ class DossierOrder(models.Model):
         ('sent_for_processing', 'Sent for processing'),
         ('cancelled', 'Cancelled'),
         ('accepted', 'Accepted'),
-        ('rejected', 'Rejected'),
         ('sent_for_selection', 'Sent for selection'),
         ('on_selection', 'On selection'),
         ('sent_for_scanning', 'Sent for scanning'),
@@ -36,6 +35,7 @@ class DossierOrder(models.Model):
 
     status = models.CharField(choices=ORDER_STATUSES)
     creator = models.ForeignKey(User, on_delete=models.SET_NULL, related_name='orders', null=True)
+    closer = models.ForeignKey(User, on_delete=models.SET_NULL, related_name='closed_orders', blank=True, null=True)
     client = models.CharField(max_length=50)
     client_department = models.CharField(max_length=100)
     service = models.CharField(choices=SERVICE_TYPES)
@@ -75,3 +75,18 @@ class DossierOrder(models.Model):
     @property
     def is_expired(self):
         return self.deadline < timezone.now() if self.deadline else None
+
+
+class DossierTask(models.Model):
+    TASK_STATUSES = (
+        ('accepted', 'Accepted'),
+        ('rejected', 'Rejected'),
+        ('in_progress', 'In progress'),
+        ('complete', 'Complete'),
+    )
+    dossier = models.ForeignKey(Dossier, on_delete=models.PROTECT, related_name='tasks')
+    order = models.ForeignKey(DossiersOrder, on_delete=models.CASCADE, related_name='tasks')
+    executor = models.ForeignKey(User, on_delete=models.SET_NULL, related_name='tasks', null=True)
+    status = models.CharField(choices=TASK_STATUSES)
+    commentary = models.TextField(null=True, blank=True)
+

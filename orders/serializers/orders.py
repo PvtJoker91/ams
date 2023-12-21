@@ -1,28 +1,28 @@
 from rest_framework import serializers
 
 from archive.serializers.nested import DossierSerializer
-from orders.models import DossierOrder
-from orders.serializers.nested import UserOrderSerializer
+from orders.models import DossiersOrder
+from orders.serializers.nested import UserShortSerializer
 from orders.serializers.utils import deadline
 
 
 class OrderCreateSerializer(serializers.ModelSerializer):
     class Meta:
-        model = DossierOrder
+        model = DossiersOrder
         exclude = 'dossiers',
 
 
 class OrderUpdateSerializer(serializers.ModelSerializer):
     class Meta:
-        model = DossierOrder
-        fields = 'status', 'dossiers', 'close_reason', 'time_create', 'time_close'
+        model = DossiersOrder
+        fields = 'status', 'dossiers', 'closer', 'close_reason', 'time_create', 'time_close'
 
 
 class OrderListSerializer(serializers.ModelSerializer):
     deadline = serializers.SerializerMethodField()
 
     class Meta:
-        model = DossierOrder
+        model = DossiersOrder
         fields = '__all__'
 
     def get_deadline(self, instance):
@@ -31,11 +31,12 @@ class OrderListSerializer(serializers.ModelSerializer):
 
 class OrderRetrieveSerializer(serializers.ModelSerializer):
     deadline = serializers.SerializerMethodField()
-    creator = UserOrderSerializer()
+    creator = UserShortSerializer()
+    closer = UserShortSerializer()
     dossiers = DossierSerializer(many=True)
 
     class Meta:
-        model = DossierOrder
+        model = DossiersOrder
         fields = '__all__'
 
     def get_deadline(self, instance):
@@ -44,5 +45,5 @@ class OrderRetrieveSerializer(serializers.ModelSerializer):
 
 class OrderDestroySerializer(serializers.ModelSerializer):
     class Meta:
-        model = DossierOrder
-        fields = '__all__'
+        model = DossiersOrder
+        fields = 'id',
