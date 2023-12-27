@@ -48,6 +48,7 @@ INSTALLED_APPS += [
     'registration',
     'logistics',
     'orders',
+    'selection',
 ]
 
 # after apps

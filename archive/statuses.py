@@ -27,3 +27,6 @@ DOSSIER_COMPLETION_AVAILABLE_STATUSES = (
 DOSSIER_CHECKING_AVAILABLE_STATUSES = (
     None, 'Is completed', 'Removed from storage', 'Is checked', 'Under checking', 'Checked in a box',
     'Removed from a box', 'Not found while checking', 'Checked with a error')
+DOSSIER_SELECTING_AVAILABLE_STATUSES = (
+    None, 'Is completed', 'Removed from storage', 'Is checked', 'Under checking', 'Checked in a box',
+    'Removed from a box', 'Not found while checking', 'Checked with a error', 'Under storage', 'Removed from storage',)

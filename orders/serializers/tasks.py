@@ -8,16 +8,17 @@ from orders.serializers.nested import OrderShortSerializer
 class TaskCreateSerializer(serializers.ModelSerializer):
     class Meta:
         model = DossierTask
-        fields = '__all__'
+        fields = 'dossier', 'order', 'task_status'
 
 
 class TaskUpdateSerializer(serializers.ModelSerializer):
     class Meta:
         model = DossierTask
-        fields = '__all__'
+        fields = 'id', 'executor', 'task_status', 'commentary'
 
 
 class TaskListSerializer(serializers.ModelSerializer):
+    deadline = serializers.SerializerMethodField()
     dossier = DossierSerializer()
     order = OrderShortSerializer()
 
@@ -25,16 +26,18 @@ class TaskListSerializer(serializers.ModelSerializer):
         model = DossierTask
         fields = '__all__'
 
+    def get_deadline(self, instance):
+        order = instance.order
+        return order.deadline
 
 
 class TaskRetrieveSerializer(serializers.ModelSerializer):
     dossier = DossierSerializer()
     order = OrderShortSerializer()
+
     class Meta:
         model = DossierTask
         fields = '__all__'
-
-
 
 
 class TaskDestroySerializer(serializers.ModelSerializer):

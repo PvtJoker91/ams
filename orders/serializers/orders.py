@@ -2,7 +2,7 @@ from rest_framework import serializers
 
 from archive.serializers.nested import DossierSerializer
 from orders.models import DossiersOrder
-from orders.serializers.nested import UserShortSerializer
+from orders.serializers.nested import UserShortSerializer, TaskShortSerializer
 from orders.serializers.utils import deadline
 
 
@@ -16,10 +16,12 @@ class OrderUpdateSerializer(serializers.ModelSerializer):
     class Meta:
         model = DossiersOrder
         fields = 'status', 'dossiers', 'closer', 'close_reason', 'time_create', 'time_close'
+        
 
 
 class OrderListSerializer(serializers.ModelSerializer):
     deadline = serializers.SerializerMethodField()
+    tasks = TaskShortSerializer(many=True)
 
     class Meta:
         model = DossiersOrder

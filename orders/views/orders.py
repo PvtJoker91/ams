@@ -3,6 +3,7 @@ from drf_spectacular.utils import extend_schema, extend_schema_view
 from rest_framework import mixins, filters
 from rest_framework.generics import get_object_or_404
 
+
 from common.pagination import CustomPagination
 from common.views.mixins import ExtendedGenericViewSet
 from orders.models import DossiersOrder
@@ -72,12 +73,12 @@ class OrderView(mixins.ListModelMixin,
         return obj
 
 
-
 @extend_schema_view(list=extend_schema(summary='My orders', tags=['Orders']))
 class MyOrdersView(mixins.ListModelMixin,
                    ExtendedGenericViewSet):
     queryset = DossiersOrder.objects.all()
     serializer_class = orders.OrderListSerializer
+    http_method_names = ('get',)
     pagination_class = CustomPagination
     permission_classes = [IsInOrdersGroup]
     filter_backends = [DjangoFilterBackend, filters.SearchFilter, filters.OrderingFilter]

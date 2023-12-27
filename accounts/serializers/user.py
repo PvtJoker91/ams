@@ -1,11 +1,12 @@
 from django.contrib.auth import get_user_model
 from django.contrib.auth.password_validation import validate_password
-from django.db import transaction
 from rest_framework import serializers
 from rest_framework.exceptions import ParseError
+
 from accounts.models.users import AMSGroup
 
 User = get_user_model()
+
 
 class AMSGroupSerializer(serializers.ModelSerializer):
     class Meta:

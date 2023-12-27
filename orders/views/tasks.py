@@ -1,6 +1,7 @@
 from django_filters.rest_framework import DjangoFilterBackend
 from drf_spectacular.utils import extend_schema, extend_schema_view
-from rest_framework import mixins, filters
+from rest_framework import mixins, filters, status
+from rest_framework.response import Response
 
 from common.pagination import CustomPagination
 from common.views.mixins import ExtendedGenericViewSet
@@ -11,7 +12,7 @@ from orders.serializers import tasks
 
 @extend_schema_view(
     list=extend_schema(summary='Tasks list', tags=['Tasks']),
-    create=extend_schema(summary='Create task', tags=['Tasks']),
+    create=extend_schema(summary='Create multiple tasks', tags=['Tasks']),
     partial_update=extend_schema(summary='Update task', tags=['Tasks']),
     retrieve=extend_schema(summary='Task detail', tags=['Tasks']),
     destroy=extend_schema(summary='Delete task', tags=['Tasks']),
@@ -36,7 +37,7 @@ class TaskView(mixins.ListModelMixin,
     permission_classes = [IsInOrdersGroup]
     filter_backends = [DjangoFilterBackend, filters.SearchFilter, filters.OrderingFilter]
     filterset_fields = [
-
+        'dossier__barcode'
     ]
     ordering_fields = [
 
@@ -47,3 +48,17 @@ class TaskView(mixins.ListModelMixin,
         response = super().get_paginated_response(data)
         response.data['current_page'] = self.request.query_params.get('page', 1)
         return response
+
+    def create(self, request, *args, **kwargs):
+        data = request.data
+        many = isinstance(data, list)
+        print(data, many)
+        serializer = self.get_serializer(data=data, many=many)
+        serializer.is_valid(raise_exception=True)
+        self.perform_create(serializer)
+        headers = self.get_success_headers(serializer.data)
+        return Response(
+            serializer.data,
+            status=status.HTTP_201_CREATED,
+            headers=headers
+        )

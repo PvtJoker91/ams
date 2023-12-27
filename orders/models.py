@@ -82,11 +82,13 @@ class DossierTask(models.Model):
         ('accepted', 'Accepted'),
         ('rejected', 'Rejected'),
         ('in_progress', 'In progress'),
-        ('complete', 'Complete'),
+        ('completed', 'Completed'),
     )
     dossier = models.ForeignKey(Dossier, on_delete=models.PROTECT, related_name='tasks')
     order = models.ForeignKey(DossiersOrder, on_delete=models.CASCADE, related_name='tasks')
     executor = models.ForeignKey(User, on_delete=models.SET_NULL, related_name='tasks', null=True)
-    status = models.CharField(choices=TASK_STATUSES)
+    task_status = models.CharField(choices=TASK_STATUSES)
     commentary = models.TextField(null=True, blank=True)
 
+    def __str__(self):
+        return self.task_status

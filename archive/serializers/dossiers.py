@@ -8,4 +8,5 @@ class DossierSearchSerializer(DossierSerializer):
 
     class Meta:
         model = Dossier
-        fields = ('id', 'barcode', 'contract', 'status')
+        fields = ('barcode', 'contract', 'status')
+
