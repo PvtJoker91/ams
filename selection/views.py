@@ -3,6 +3,7 @@ from django_filters.rest_framework import DjangoFilterBackend
 from drf_spectacular.utils import extend_schema_view, extend_schema
 from rest_framework import mixins, filters
 from rest_framework.exceptions import ParseError
+from rest_framework.permissions import AllowAny
 from rest_framework.viewsets import GenericViewSet
 
 from archive.models import Dossier
@@ -58,7 +59,7 @@ class SelectionOrderView(mixins.CreateModelMixin,
                          GenericViewSet):
     queryset = SelectionOrder.objects.all()
     serializer_class = SelectionOrderSerializer
-    permission_classes = [IsInLogisticsGroup]
+    permission_classes = [AllowAny]
     pagination_class = CustomPagination
     filter_backends = [DjangoFilterBackend, filters.SearchFilter, filters.OrderingFilter]
     filterset_fields = [

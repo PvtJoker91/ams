@@ -81,7 +81,8 @@ class DossierTask(models.Model):
     TASK_STATUSES = (
         ('accepted', 'Accepted'),
         ('rejected', 'Rejected'),
-        ('in_progress', 'In progress'),
+        ('on_selection', 'On selection'),
+        ('on_scanning', 'On scanning'),
         ('completed', 'Completed'),
     )
     dossier = models.ForeignKey(Dossier, on_delete=models.PROTECT, related_name='tasks')

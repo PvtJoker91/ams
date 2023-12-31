@@ -6,7 +6,7 @@ from rest_framework.generics import get_object_or_404
 
 from common.pagination import CustomPagination
 from common.views.mixins import ExtendedGenericViewSet
-from orders.models import DossiersOrder
+from orders.models import DossiersOrder, DossierTask
 from orders.permissions import IsInOrdersGroup
 from orders.serializers import orders
 
@@ -71,6 +71,14 @@ class OrderView(mixins.ListModelMixin,
         obj = get_object_or_404(queryset, **filter_kwargs)
         self.check_object_permissions(self.request, obj)
         return obj
+
+    def update(self, request, *args, **kwargs):
+        status = request.data.get('status', None)
+        if status == 'cancelled':
+            order_id = self.kwargs.get('pk')
+            DossierTask.objects.filter(order=order_id).delete()
+        return super().update(request, *args, **kwargs)
+
 
 
 @extend_schema_view(list=extend_schema(summary='My orders', tags=['Orders']))

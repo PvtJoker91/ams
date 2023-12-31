@@ -11,11 +11,13 @@ from selection.models import SelectionOrder
 
 
 class DossierSelectingSerializer(DossierSerializer):
-    archive_box = ABSerializer()
+    archive_box = ABSerializer(required=False)
 
     class Meta:
         model = Dossier
-        fields = ('barcode', 'current_sector', 'status', 'archive_box')
+        fields = ('barcode',
+                  'current_sector', 'status', 'archive_box'
+                  )
 
     def update(self, instance, validated_data):
         if not check_dossier_in_task(instance):
@@ -30,16 +32,16 @@ class TaskSelectingSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = DossierTask
-        fields = 'dossier', 'hours_left', 'location',
+        fields = 'id', 'dossier', 'hours_left', 'location',
 
     def get_hours_left(self, instance):
         return (instance.order.deadline - timezone.now()) // 3600
 
 
-
 class SelectionOrderSerializer(serializers.ModelSerializer):
-    dossiers = DossierSelectingSerializer(many=True)
+    dossiers = serializers.PrimaryKeyRelatedField(queryset=Dossier.objects.all(), many=True)
 
     class Meta:
         model = SelectionOrder
         fields = '__all__'
+
