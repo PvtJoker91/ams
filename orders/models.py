@@ -82,6 +82,7 @@ class DossierTask(models.Model):
         ('accepted', 'Accepted'),
         ('rejected', 'Rejected'),
         ('on_selection', 'On selection'),
+        ('selected', 'Selected'),
         ('on_scanning', 'On scanning'),
         ('completed', 'Completed'),
     )

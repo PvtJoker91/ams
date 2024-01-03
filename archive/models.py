@@ -1,4 +1,7 @@
+from django.contrib.auth import get_user_model
 from django.db import models
+
+User = get_user_model()
 
 
 class Archive(models.Model):
@@ -79,9 +82,9 @@ class ArchiveBox(models.Model):
 
 
 class Dossier(models.Model):
+    barcode = models.CharField(primary_key=True, max_length=40, verbose_name='Штрих-код досье', unique=True)
     contract = models.ForeignKey('bank_clients.Contract', on_delete=models.PROTECT, related_name='dossiers',
                                  verbose_name='Договор')
-    barcode = models.CharField(primary_key=True, max_length=40, verbose_name='Штрих-код досье', unique=True)
     current_sector = models.ForeignKey('Sector', on_delete=models.SET_NULL, related_name='dossiers',
                                        verbose_name='Расположение', null=True, blank=True)
     status = models.CharField(max_length=30, default='На регистрации', verbose_name='Статус досье')
@@ -107,13 +110,25 @@ class Dossier(models.Model):
 
 
 class Registry(models.Model):
-    type = models.CharField(max_length=20)
-    barcode = models.CharField(max_length=40, verbose_name='Штрих-код реестра', unique=True)
-    dossiers = models.ManyToManyField('Dossier', verbose_name='Досье')
+    TYPES = (
+        ('lr', 'Logistics to Requests'),
+        ('rl', 'Requests to Logistics'),
+    )
+    STATUSES = (
+        ('creation', 'Creation'),
+        ('sent', 'Sent'),
+        ('on_acceptance', 'On acceptance'),
+        ('accepted', 'Accepted'),
+    )
+    type = models.CharField(choices=TYPES)
+    status = models.CharField(choices=STATUSES)
+    time_create = models.DateTimeField(auto_now=True)
+    dossiers = models.ManyToManyField('Dossier', verbose_name='Досье', related_name='registries')
+    sender = models.ForeignKey(User, verbose_name='Отправитель', on_delete=models.SET_NULL, related_name='registries', null=True)
 
     class Meta:
         verbose_name = 'Реестр'
         verbose_name_plural = 'Реестры'
 
     def __str__(self):
-        return f'{self.type} {self.barcode}'
+        return f'{self.type}'

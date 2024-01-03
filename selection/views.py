@@ -3,20 +3,22 @@ from django_filters.rest_framework import DjangoFilterBackend
 from drf_spectacular.utils import extend_schema_view, extend_schema
 from rest_framework import mixins, filters
 from rest_framework.exceptions import ParseError
-from rest_framework.permissions import AllowAny
 from rest_framework.viewsets import GenericViewSet
 
-from archive.models import Dossier
+from archive.models import Dossier, Registry
+from archive.serializers.nested import RegistrySerializer
 from common.pagination import CustomPagination
 from common.services.validators import validate_dossier_barcode
+from logistics.permissions import IsInLogisticsGroup
 from orders.models import DossierTask
 from selection.models import SelectionOrder
-from logistics.permissions import IsInLogisticsGroup
-from selection.serializers import DossierSelectingSerializer, SelectionOrderSerializer, TaskSelectingSerializer
+from selection.serializers.dossiers import DossierSelectingSerializer
+from selection.serializers.orders import SelectionOrderCreateSerializer, SelectionOrderSerializer
+from selection.serializers.tasks import TaskSelectingSerializer
 
 
 @extend_schema_view(
-    list=extend_schema(summary='Tasks list to select', tags=['Selection']),
+    list=extend_schema(summary='Task list to select', tags=['Selection']),
 )
 class TaskSelectingView(mixins.ListModelMixin,
                         GenericViewSet):
@@ -25,12 +27,12 @@ class TaskSelectingView(mixins.ListModelMixin,
     permission_classes = [IsInLogisticsGroup]
 
     def get_queryset(self):
-        return DossierTask.objects.filter(task_status='accepted').annotate(location=F('dossier__archive_box__storage_address__shelf_code'))
-
+        return DossierTask.objects.filter(task_status='accepted').annotate(
+            location=F('dossier__archive_box__storage_address__shelf_code'))
 
 
 @extend_schema_view(
-    partial_update=extend_schema(summary='Selecting dossier', tags=['Selection']),
+    partial_update=extend_schema(summary='Select dossier', tags=['Selection']),
 )
 class DossierSelectingView(mixins.UpdateModelMixin,
                            GenericViewSet):
@@ -59,7 +61,7 @@ class SelectionOrderView(mixins.CreateModelMixin,
                          GenericViewSet):
     queryset = SelectionOrder.objects.all()
     serializer_class = SelectionOrderSerializer
-    permission_classes = [AllowAny]
+    permission_classes = [IsInLogisticsGroup]
     pagination_class = CustomPagination
     filter_backends = [DjangoFilterBackend, filters.SearchFilter, filters.OrderingFilter]
     filterset_fields = [
@@ -68,9 +70,25 @@ class SelectionOrderView(mixins.CreateModelMixin,
     ordering_fields = [
         'time_create',
     ]
-    ordering = ['urgency']
+    ordering = ['-time_create']
 
     def get_paginated_response(self, data):
         response = super().get_paginated_response(data)
         response.data['current_page'] = self.request.query_params.get('page', 1)
         return response
+
+    def get_serializer_class(self):
+        if self.request.method == 'POST':
+            return SelectionOrderCreateSerializer
+        return SelectionOrderSerializer
+
+
+@extend_schema_view(
+    partial_update=extend_schema(summary='Send registry to requests', tags=['Selection']),
+)
+class RegistrySelectionView(mixins.UpdateModelMixin,
+                           GenericViewSet):
+    queryset = Registry.objects.all()
+    serializer_class = RegistrySerializer
+    permission_classes = [IsInLogisticsGroup]
+    http_method_names = ('patch',)

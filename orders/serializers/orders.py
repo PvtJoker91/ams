@@ -27,7 +27,7 @@ class OrderListSerializer(serializers.ModelSerializer):
         model = DossiersOrder
         fields = '__all__'
 
-    def get_deadline(self, instance):
+    def get_deadline(self, instance) -> str:
         return deadline(instance)
 
 
@@ -41,7 +41,7 @@ class OrderRetrieveSerializer(serializers.ModelSerializer):
         model = DossiersOrder
         fields = '__all__'
 
-    def get_deadline(self, instance):
+    def get_deadline(self, instance) -> str:
         return deadline(instance)
 
 

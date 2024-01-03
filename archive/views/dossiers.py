@@ -48,6 +48,7 @@ class DossierView(mixins.ListModelMixin,
 )
 class DossiersListUpdateView(APIView):
     permission_classes = [IsAuthenticated]
+    serializer_class = DossierSerializer
 
     def get_object(self, barcode):
         try:
@@ -77,5 +78,5 @@ class DossiersListUpdateView(APIView):
             obj.status = status
             obj.save()
             instances.append(obj)
-        serializer = DossierSerializer(instances, many=True)
+        serializer = self.serializer_class(instances, many=True)
         return Response(serializer.data)

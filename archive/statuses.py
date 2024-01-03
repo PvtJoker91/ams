@@ -19,7 +19,8 @@ DOSSIER_STATUSES = (None, 'Under registration', 'Is registered',
                     'Checked with a error',
                     'Removed from a box', 'Added to a box',
                     'Checked in a box',
-                    'Not found while checking', 'Wrong operation/sector')
+                    'Not found while checking', 'Selected',
+                    'Wrong operation/sector')
 DOSSIER_REGISTRATION_AVAILABLE_STATUSES = ('Is registered',)
 DOSSIER_COMPLETION_AVAILABLE_STATUSES = (
     None, 'Under completion', 'Is completed', 'Removed from storage', 'Is checked', 'Removed from a box',
@@ -28,5 +29,5 @@ DOSSIER_CHECKING_AVAILABLE_STATUSES = (
     None, 'Is completed', 'Removed from storage', 'Is checked', 'Under checking', 'Checked in a box',
     'Removed from a box', 'Not found while checking', 'Checked with a error')
 DOSSIER_SELECTING_AVAILABLE_STATUSES = (
-    None, 'Is completed', 'Removed from storage', 'Is checked', 'Under checking', 'Checked in a box',
+    None, 'Is completed', 'Removed from storage', 'Is checked', 'Under checking', 'Checked in a box', 'Selected',
     'Removed from a box', 'Not found while checking', 'Checked with a error', 'Under storage', 'Removed from storage',)

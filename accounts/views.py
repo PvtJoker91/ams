@@ -30,16 +30,13 @@ class RegistrationView(generics.CreateAPIView):
     serializer_class = RegistrationSerializer
 
 
-@extend_schema_view(
-    post=extend_schema(
-        request=ChangePasswordSerializer,
-        summary='Смена пароля', tags=['Auth']),
-)
+@extend_schema_view(post=extend_schema(request=ChangePasswordSerializer, summary='Смена пароля', tags=['Auth']))
 class ChangePasswordView(APIView):
+    serializer_class = ChangePasswordSerializer
 
     def post(self, request):
         user = request.user
-        serializer = ChangePasswordSerializer(
+        serializer = self.serializer_class(
             instance=user, data=request.data
         )
         serializer.is_valid(raise_exception=True)

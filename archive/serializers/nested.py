@@ -1,6 +1,6 @@
 from rest_framework import serializers
 
-from archive.models import ArchiveBox, Dossier, StorageShelf
+from archive.models import ArchiveBox, Dossier, StorageShelf, Registry
 from common.services.validators import validate_ab_barcode, validate_dossier_barcode
 
 
@@ -17,7 +17,6 @@ class ABSerializer(serializers.ModelSerializer):
 
 
 class DossierSerializer(serializers.ModelSerializer):
-
     class Meta:
         model = Dossier
         fields = 'barcode',
@@ -32,4 +31,10 @@ class DossierSerializer(serializers.ModelSerializer):
 class ShelfSerializer(serializers.ModelSerializer):
     class Meta:
         model = StorageShelf
-        fields = ('shelf_code',)
+        fields = 'shelf_code',
+
+
+class RegistrySerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Registry
+        fields = '__all__'

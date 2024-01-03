@@ -23,10 +23,10 @@ def update_dossier(instance, validated_data, available_statuses):
 
 
 def check_dossier_in_task(instance):
-    return DossierTask.objects.filter(dossier=instance.id).exists()
+    return DossierTask.objects.filter(dossier=instance).exists()
 
 # единая проверка досье на всех операциях -  надо сделать!
-def check_dossier(instance, available_statuses):
+def check_dossier_status(instance, available_statuses):
     if instance.status not in available_statuses:
         instance.archive_box = None
         instance.status = 'Wrong operation/sector'

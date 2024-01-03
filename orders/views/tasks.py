@@ -71,6 +71,7 @@ class TaskView(mixins.ListModelMixin,
 )
 class TaskListUpdateView(APIView):
     permission_classes = [IsAuthenticated]
+    serializer_class = tasks.TaskUpdateSerializer
 
     def get_object(self, id):
         try:
@@ -98,5 +99,5 @@ class TaskListUpdateView(APIView):
             obj.task_status = status
             obj.save()
             instances.append(obj)
-        serializer = tasks.TaskUpdateSerializer(instances, many=True)
+        serializer = self.serializer_class(instances, many=True)
         return Response(serializer.data)

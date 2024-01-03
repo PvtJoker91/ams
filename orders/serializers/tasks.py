@@ -19,20 +19,18 @@ class TaskUpdateSerializer(serializers.ModelSerializer):
 
 class TaskListSerializer(serializers.ModelSerializer):
     deadline = serializers.SerializerMethodField()
-    dossier = DossierSerializer()
     order = OrderShortSerializer()
 
     class Meta:
         model = DossierTask
         fields = '__all__'
 
-    def get_deadline(self, instance):
+    def get_deadline(self, instance) -> str:
         order = instance.order
         return order.deadline
 
 
 class TaskRetrieveSerializer(serializers.ModelSerializer):
-    dossier = DossierSerializer()
     order = OrderShortSerializer()
 
     class Meta:

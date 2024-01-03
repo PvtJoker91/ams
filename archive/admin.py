@@ -56,6 +56,6 @@ class DossierAdmin(admin.ModelAdmin):
 
 @admin.register(Registry)
 class RegistryAdmin(admin.ModelAdmin):
-    list_display = 'type', 'barcode'
+    list_display = 'type',
     search_fields = 'dossier__barcode',
     filter_horizontal = 'dossiers',
