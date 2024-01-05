@@ -1,8 +1,6 @@
-from rest_framework import serializers
-
 from archive.models import ArchiveBox, Dossier
 from archive.serializers.nested import ABSerializer, DossierSerializer
-from archive.statuses import DOSSIER_CHECKING_AVAILABLE_STATUSES
+from common.services.statuses import DOSSIER_CHECKING_AVAILABLE_STATUSES
 from common.services.archive_box import update_box_under_checking
 from common.services.dossiers import update_dossier
 

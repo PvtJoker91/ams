@@ -58,4 +58,4 @@ class DossierAdmin(admin.ModelAdmin):
 class RegistryAdmin(admin.ModelAdmin):
     list_display = 'type',
     search_fields = 'dossier__barcode',
-    filter_horizontal = 'dossiers',
+    filter_horizontal = 'dossiers', 'checked_dossiers'

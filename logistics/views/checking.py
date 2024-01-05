@@ -4,7 +4,7 @@ from rest_framework.exceptions import ParseError
 from rest_framework.viewsets import GenericViewSet
 
 from archive.models import Dossier, ArchiveBox
-from archive.statuses import DOSSIER_CHECKING_AVAILABLE_STATUSES
+from common.services.statuses import DOSSIER_CHECKING_AVAILABLE_STATUSES
 from common.services.validators import validate_dossier_barcode
 from logistics.permissions import IsInLogisticsGroup
 from logistics.serializers.checking import DossierCheckSerializer, ABCheckSerializer

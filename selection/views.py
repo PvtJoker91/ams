@@ -6,7 +6,6 @@ from rest_framework.exceptions import ParseError
 from rest_framework.viewsets import GenericViewSet
 
 from archive.models import Dossier, Registry
-from archive.serializers.nested import RegistrySerializer
 from common.pagination import CustomPagination
 from common.services.validators import validate_dossier_barcode
 from logistics.permissions import IsInLogisticsGroup
@@ -14,6 +13,7 @@ from orders.models import DossierTask
 from selection.models import SelectionOrder
 from selection.serializers.dossiers import DossierSelectingSerializer
 from selection.serializers.orders import SelectionOrderCreateSerializer, SelectionOrderSerializer
+from selection.serializers.registries import RegistrySelectionSerializer
 from selection.serializers.tasks import TaskSelectingSerializer
 
 
@@ -87,8 +87,8 @@ class SelectionOrderView(mixins.CreateModelMixin,
     partial_update=extend_schema(summary='Send registry to requests', tags=['Selection']),
 )
 class RegistrySelectionView(mixins.UpdateModelMixin,
-                           GenericViewSet):
+                            GenericViewSet):
     queryset = Registry.objects.all()
-    serializer_class = RegistrySerializer
+    serializer_class = RegistrySelectionSerializer
     permission_classes = [IsInLogisticsGroup]
     http_method_names = ('patch',)

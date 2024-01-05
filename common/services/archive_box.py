@@ -1,8 +1,7 @@
 from rest_framework.exceptions import ParseError
 
 from archive.models import StorageShelf, ArchiveBox
-from archive.statuses import AB_CHECKING_AVAILABLE_STATUSES, AB_COMPLETION_AVAILABLE_STATUSES, \
-    AB_PLACEMENT_AVAILABLE_STATUSES, AB_REGISTRATION_AVAILABLE_STATUSES
+from common.services.statuses import AB_CHECKING_AVAILABLE_STATUSES, AB_PLACEMENT_AVAILABLE_STATUSES
 from common.services.dossiers import update_dossiers_in_box_status_and_sector
 
 

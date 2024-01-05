@@ -64,9 +64,15 @@ class Sector(models.Model):
 
 class ArchiveBox(models.Model):
     barcode = models.CharField(max_length=20, verbose_name='Штрих-код АБ')
-    current_sector = models.ForeignKey('Sector', on_delete=models.SET_NULL, related_name='archive_box', null=True)
-    storage_address = models.ForeignKey('StorageShelf', on_delete=models.PROTECT, related_name='archive_box',
-                                        verbose_name='Размещение', blank=True, null=True, default=None)
+    current_sector = models.ForeignKey('Sector',
+                                       on_delete=models.SET_NULL,
+                                       related_name='archive_box',
+                                       null=True)
+    storage_address = models.ForeignKey('StorageShelf',
+                                        verbose_name='Размещение',
+                                        on_delete=models.PROTECT,
+                                        related_name='archive_box',
+                                        blank=True, null=True, default=None)
     status = models.CharField(max_length=30, verbose_name='Статус бокса', blank=True, null=True)
 
     def __str__(self):
@@ -82,17 +88,26 @@ class ArchiveBox(models.Model):
 
 
 class Dossier(models.Model):
-    barcode = models.CharField(primary_key=True, max_length=40, verbose_name='Штрих-код досье', unique=True)
-    contract = models.ForeignKey('bank_clients.Contract', on_delete=models.PROTECT, related_name='dossiers',
-                                 verbose_name='Договор')
-    current_sector = models.ForeignKey('Sector', on_delete=models.SET_NULL, related_name='dossiers',
-                                       verbose_name='Расположение', null=True, blank=True)
+    barcode = models.CharField(primary_key=True,
+                               verbose_name='Штрих-код досье',
+                               max_length=40,
+                               unique=True)
     status = models.CharField(max_length=30, default='На регистрации', verbose_name='Статус досье')
-    archive_box = models.ForeignKey(
-        'ArchiveBox', on_delete=models.SET_NULL,
-        verbose_name='Архивный бокс', related_name='dossiers',
-        null=True, blank=True
-    )
+    contract = models.ForeignKey('bank_clients.Contract',
+                                 verbose_name='Договор',
+                                 on_delete=models.PROTECT,
+                                 related_name='dossiers')
+    current_sector = models.ForeignKey('Sector',
+                                       verbose_name='Расположение',
+                                       on_delete=models.SET_NULL,
+                                       related_name='dossiers',
+                                       null=True, blank=True)
+    archive_box = models.ForeignKey('ArchiveBox',
+                                    verbose_name='Архивный бокс',
+                                    on_delete=models.SET_NULL,
+                                    related_name='dossiers',
+                                    null=True, blank=True)
+    scan_files = models.FileField(upload_to='dossier_scans', blank=True, null=True)
 
     class Meta:
         verbose_name = 'Досье'
@@ -123,8 +138,18 @@ class Registry(models.Model):
     type = models.CharField(choices=TYPES)
     status = models.CharField(choices=STATUSES)
     time_create = models.DateTimeField(auto_now=True)
-    dossiers = models.ManyToManyField('Dossier', verbose_name='Досье', related_name='registries')
-    sender = models.ForeignKey(User, verbose_name='Отправитель', on_delete=models.SET_NULL, related_name='registries', null=True)
+    dossiers = models.ManyToManyField('Dossier',
+                                      verbose_name='Досье',
+                                      related_name='registries')
+    checked_dossiers = models.ManyToManyField('Dossier',
+                                              verbose_name='Сверенные досье',
+                                              related_name='registries_checked',
+                                              blank=True)
+    sender = models.ForeignKey(User,
+                               verbose_name='Отправитель',
+                               on_delete=models.SET_NULL,
+                               related_name='registries',
+                               null=True)
 
     class Meta:
         verbose_name = 'Реестр'

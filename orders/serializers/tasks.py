@@ -1,6 +1,5 @@
 from rest_framework import serializers
 
-from archive.serializers.nested import DossierSerializer
 from orders.models import DossierTask
 from orders.serializers.nested import OrderShortSerializer
 

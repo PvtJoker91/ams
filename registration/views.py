@@ -6,7 +6,7 @@ from rest_framework.response import Response
 from rest_framework.viewsets import GenericViewSet
 
 from archive.models import ArchiveBox, Dossier
-from archive.statuses import DOSSIER_REGISTRATION_AVAILABLE_STATUSES
+from common.services.statuses import DOSSIER_REGISTRATION_AVAILABLE_STATUSES
 from common.services.validators import validate_dossier_barcode
 from registration.permissions import IsInRegistrationGroup
 from registration.serializers import ABRegSerializer, DossierRegSerializer
