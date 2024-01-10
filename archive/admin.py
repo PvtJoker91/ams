@@ -1,6 +1,6 @@
 from django.contrib import admin
 
-from archive.models import Archive, StorageShelf, ArchiveBox, Dossier, Sector, Registry
+from archive.models import Archive, StorageShelf, ArchiveBox, Dossier, Sector, Registry, DossierScan
 
 
 ##############################
@@ -52,6 +52,11 @@ class ArchiveBoxAdmin(admin.ModelAdmin):
 class DossierAdmin(admin.ModelAdmin):
     list_display = 'contract', 'barcode', 'current_sector', 'status', 'archive_box', 'storage_address'
     search_fields = 'contract__contract_number',
+
+
+@admin.register(DossierScan)
+class DossierScanAdmin(admin.ModelAdmin):
+    list_display = 'dossier', 'file', 'name', 'description'
 
 
 @admin.register(Registry)

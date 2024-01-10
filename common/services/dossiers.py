@@ -1,7 +1,7 @@
 from rest_framework.exceptions import ParseError
 
 from archive.models import Dossier
-from orders.models import DossierTask
+from dossier_requests.models import DossierTask
 
 
 def update_dossiers_in_box_status_and_sector(archive_box):

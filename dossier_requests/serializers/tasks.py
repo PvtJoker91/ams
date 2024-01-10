@@ -1,13 +1,13 @@
 from rest_framework import serializers
 
-from orders.models import DossierTask
-from orders.serializers.nested import OrderShortSerializer
+from dossier_requests.serializers.nested import RequestShortSerializer
+from dossier_requests.models import DossierTask
 
 
 class TaskCreateSerializer(serializers.ModelSerializer):
     class Meta:
         model = DossierTask
-        fields = 'dossier', 'order', 'task_status'
+        fields = 'dossier', 'request', 'task_status'
 
 
 class TaskUpdateSerializer(serializers.ModelSerializer):
@@ -18,19 +18,19 @@ class TaskUpdateSerializer(serializers.ModelSerializer):
 
 class TaskListSerializer(serializers.ModelSerializer):
     deadline = serializers.SerializerMethodField()
-    order = OrderShortSerializer()
+    request = RequestShortSerializer()
 
     class Meta:
         model = DossierTask
         fields = '__all__'
 
     def get_deadline(self, instance) -> str:
-        order = instance.order
-        return order.deadline
+        request = instance.request
+        return request.deadline
 
 
 class TaskRetrieveSerializer(serializers.ModelSerializer):
-    order = OrderShortSerializer()
+    request = RequestShortSerializer()
 
     class Meta:
         model = DossierTask

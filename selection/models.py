@@ -2,7 +2,7 @@ from django.contrib.auth import get_user_model
 from django.db import models
 
 
-from orders.models import DossierTask
+from dossier_requests.models import DossierTask
 
 User = get_user_model()
 

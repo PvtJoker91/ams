@@ -9,11 +9,11 @@ from archive.models import Dossier, Registry
 from common.pagination import CustomPagination
 from common.services.validators import validate_dossier_barcode
 from logistics.permissions import IsInLogisticsGroup
-from orders.models import DossierTask
+from dossier_requests.models import DossierTask
 from selection.models import SelectionOrder
 from selection.serializers.dossiers import DossierSelectingSerializer
 from selection.serializers.orders import SelectionOrderCreateSerializer, SelectionOrderSerializer
-from selection.serializers.registries import RegistrySelectionSerializer
+from archive.serializers.registries import RegistrySerializer
 from selection.serializers.tasks import TaskSelectingSerializer
 
 
@@ -89,6 +89,6 @@ class SelectionOrderView(mixins.CreateModelMixin,
 class RegistrySelectionView(mixins.UpdateModelMixin,
                             GenericViewSet):
     queryset = Registry.objects.all()
-    serializer_class = RegistrySelectionSerializer
+    serializer_class = RegistrySerializer
     permission_classes = [IsInLogisticsGroup]
     http_method_names = ('patch',)

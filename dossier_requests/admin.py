@@ -1,10 +1,10 @@
 from django.contrib import admin
 
-from orders.models import DossiersOrder, DossierTask
+from dossier_requests.models import DossierRequest, DossierTask
 
 
-@admin.register(DossiersOrder)
-class DossierOrderAdmin(admin.ModelAdmin):
+@admin.register(DossierRequest)
+class DossierRequestAdmin(admin.ModelAdmin):
     list_display = (
         'creator', 'client', 'client_department',
         'service', 'urgency', 'time_create',

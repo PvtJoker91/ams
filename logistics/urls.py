@@ -7,7 +7,6 @@ from logistics.views.checking import DossierCheckView, ABCheckView
 
 
 router = routers.SimpleRouter()
-router.register(r'placement', ABPlacementView, basename='abplacement')
 router.register(r'checking', ABCheckView, basename='abcheck')
 router.register(r'completion', ABCompletionView, basename='abcompletion')
 router.register(r'checking/dossier', DossierCheckView, basename='dossierchecking')
@@ -15,4 +14,5 @@ router.register(r'completion/dossier', DossierCompletionView, basename='dossierc
 
 urlpatterns = [
     path('logistics/', include(router.urls)),
+    path('logistics/placement', ABPlacementView.as_view(), name='abplacement'),
 ]

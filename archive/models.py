@@ -107,7 +107,6 @@ class Dossier(models.Model):
                                     on_delete=models.SET_NULL,
                                     related_name='dossiers',
                                     null=True, blank=True)
-    scan_files = models.FileField(upload_to='dossier_scans', blank=True, null=True)
 
     class Meta:
         verbose_name = 'Досье'
@@ -124,14 +123,34 @@ class Dossier(models.Model):
             return None
 
 
+class DossierScan(models.Model):
+    def user_directory_path(self, filename):
+        return f'dossier_scans/{self.dossier.barcode}/{filename}'
+
+    dossier = models.ForeignKey(Dossier, on_delete=models.PROTECT, related_name='scans')
+    file = models.FileField(upload_to=user_directory_path)
+    name = models.CharField(max_length=30)
+    description = models.TextField(null=True, blank=True)
+    date_upload = models.DateTimeField(auto_now=True)
+
+    class Meta:
+        verbose_name = 'Скан-копия'
+        verbose_name_plural = 'Скан-копии'
+
+    def __str__(self):
+        return self.name
+
+
 class Registry(models.Model):
     TYPES = (
         ('lr', 'Logistics to Requests'),
         ('rl', 'Requests to Logistics'),
+        ('rc', 'Requests to Customer'),
     )
     STATUSES = (
         ('creation', 'Creation'),
-        ('sent', 'Sent'),
+        ('sent_to_requests', 'Sent to requests'),
+        ('sent_to_customer', 'Sent to customer'),
         ('on_acceptance', 'On acceptance'),
         ('accepted', 'Accepted'),
     )
@@ -140,7 +159,8 @@ class Registry(models.Model):
     time_create = models.DateTimeField(auto_now=True)
     dossiers = models.ManyToManyField('Dossier',
                                       verbose_name='Досье',
-                                      related_name='registries')
+                                      related_name='registries',
+                                      blank=True)
     checked_dossiers = models.ManyToManyField('Dossier',
                                               verbose_name='Сверенные досье',
                                               related_name='registries_checked',

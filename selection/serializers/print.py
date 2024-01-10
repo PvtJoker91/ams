@@ -2,7 +2,7 @@ from rest_framework import serializers
 
 from archive.models import ArchiveBox, Dossier
 from archive.serializers.nested import ShelfSerializer
-from orders.models import DossierTask
+from dossier_requests.models import DossierTask
 
 
 class ABPrintSerializer(serializers.ModelSerializer):

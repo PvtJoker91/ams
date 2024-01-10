@@ -21,6 +21,7 @@ DOSSIER_STATUSES = (None, 'Under registration', 'Is registered',
                     'Checked in a box',
                     'Not found while checking', 'Selected',
                     'Sent to requests', 'Accepted in requests',
+                    'Add to registry', 'Sent to customer',
                     'Wrong operation/sector')
 DOSSIER_REGISTRATION_AVAILABLE_STATUSES = ('Is registered',)
 DOSSIER_COMPLETION_AVAILABLE_STATUSES = (

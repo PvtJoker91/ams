@@ -1,7 +1,7 @@
 from rest_framework import serializers
 
 from accounts.serializers.nested import AMSUserShortSerializer
-from orders.models import DossierTask
+from dossier_requests.models import DossierTask
 from selection.models import SelectionOrder
 from selection.serializers.print import TaskPrintSerializer
 

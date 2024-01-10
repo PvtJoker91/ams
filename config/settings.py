@@ -47,7 +47,7 @@ INSTALLED_APPS += [
     'bank_clients',
     'registration',
     'logistics',
-    'orders',
+    'dossier_requests',
     'selection',
 ]
 

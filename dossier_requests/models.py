@@ -7,7 +7,7 @@ from archive.models import Dossier
 User = get_user_model()
 
 
-class DossiersOrder(models.Model):
+class DossierRequest(models.Model):
     SERVICE_TYPES = (
         ('full_scanning', 'Full scanning'),
         ('scanning_by_documents', 'Scanning by documents'),
@@ -21,7 +21,7 @@ class DossiersOrder(models.Model):
         ('8', 'High - 8 w.h.'),
     )
 
-    ORDER_STATUSES = (
+    REQUEST_STATUSES = (
         ('creation', 'Creation'),
         ('sent_for_processing', 'Sent for processing'),
         ('cancelled', 'Cancelled'),
@@ -33,9 +33,9 @@ class DossiersOrder(models.Model):
         ('complete', 'Complete'),
     )
 
-    status = models.CharField(choices=ORDER_STATUSES)
-    creator = models.ForeignKey(User, on_delete=models.SET_NULL, related_name='orders', null=True)
-    closer = models.ForeignKey(User, on_delete=models.SET_NULL, related_name='closed_orders', blank=True, null=True)
+    status = models.CharField(choices=REQUEST_STATUSES)
+    creator = models.ForeignKey(User, on_delete=models.SET_NULL, related_name='requests', null=True)
+    closer = models.ForeignKey(User, on_delete=models.SET_NULL, related_name='closed_requests', blank=True, null=True)
     client = models.CharField(max_length=50)
     client_department = models.CharField(max_length=100)
     service = models.CharField(choices=SERVICE_TYPES)
@@ -44,7 +44,7 @@ class DossiersOrder(models.Model):
     close_reason = models.TextField(null=True, blank=True)
     time_create = models.DateTimeField(null=True, blank=True)
     time_close = models.DateTimeField(null=True, blank=True)
-    dossiers = models.ManyToManyField(Dossier, related_name='orders', blank=True)
+    dossiers = models.ManyToManyField(Dossier, related_name='requests', blank=True)
 
     def __str__(self):
         return f'{self.service} {self.client_department}'
@@ -80,17 +80,20 @@ class DossiersOrder(models.Model):
 class DossierTask(models.Model):
     TASK_STATUSES = (
         ('accepted', 'Accepted'),
-        ('rejected', 'Rejected'),
+        ('cancelled', 'Cancelled'),
         ('on_selection', 'On selection'),
         ('selected', 'Selected'),
-        ('on_scanning', 'On scanning'),
+        ('rejected', 'Rejected'),
+        ('add_to_registry', 'Add to registry'),
         ('completed', 'Completed'),
     )
     dossier = models.ForeignKey(Dossier, on_delete=models.PROTECT, related_name='tasks')
-    order = models.ForeignKey(DossiersOrder, on_delete=models.CASCADE, related_name='tasks')
+    request = models.ForeignKey(DossierRequest, on_delete=models.CASCADE, related_name='tasks')
     executor = models.ForeignKey(User, on_delete=models.SET_NULL, related_name='tasks', null=True)
     task_status = models.CharField(choices=TASK_STATUSES)
     commentary = models.TextField(null=True, blank=True)
 
     def __str__(self):
         return self.task_status
+
+

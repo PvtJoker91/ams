@@ -7,8 +7,8 @@ from rest_framework.response import Response
 from rest_framework.views import APIView
 from rest_framework.viewsets import GenericViewSet
 
-from archive.models import Dossier
-from archive.serializers.dossiers import DossierSearchSerializer
+from archive.models import Dossier, DossierScan
+from archive.serializers.dossiers import DossierSearchSerializer, DossierScanSerializer
 from archive.serializers.nested import DossierSerializer
 
 
@@ -80,3 +80,25 @@ class DossiersListUpdateView(APIView):
             instances.append(obj)
         serializer = self.serializer_class(instances, many=True)
         return Response(serializer.data)
+
+
+
+@extend_schema_view(
+    create=extend_schema(summary='Add scan to dossier', tags=['Units']),
+    list=extend_schema(summary='Dossier scan list', tags=['Units']),
+    retrieve=extend_schema(summary='Scan details', tags=['Units']),
+    destroy=extend_schema(summary='Delete scan', tags=['Units']),
+)
+class DossierScanView(mixins.CreateModelMixin,
+                      mixins.RetrieveModelMixin,
+                      mixins.ListModelMixin,
+                      mixins.DestroyModelMixin,
+                      GenericViewSet):
+    serializer_class = DossierScanSerializer
+    queryset = DossierScan.objects.all()
+
+    def get_queryset(self):
+        dossier = self.request.query_params.get('dossier')
+        if dossier:
+            return DossierScan.objects.filter(dossier=dossier)
+        return DossierScan.objects.all()

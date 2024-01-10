@@ -1,7 +1,7 @@
 from django.contrib.auth import get_user_model
 from rest_framework.serializers import ModelSerializer
 
-from orders.models import DossiersOrder, DossierTask
+from dossier_requests.models import DossierRequest, DossierTask
 
 User = get_user_model()
 
@@ -14,15 +14,16 @@ class UserShortSerializer(ModelSerializer):
                   'email')
 
 
-class OrderShortSerializer(ModelSerializer):
+class RequestShortSerializer(ModelSerializer):
     class Meta:
-        model = DossiersOrder
+        model = DossierRequest
         fields = (
             'id',
             'status',
             'service',
             'urgency',
             'time_create',
+            'description',
         )
 
 
