@@ -84,7 +84,6 @@ class DossierTask(models.Model):
         ('on_selection', 'On selection'),
         ('selected', 'Selected'),
         ('rejected', 'Rejected'),
-        ('add_to_registry', 'Add to registry'),
         ('completed', 'Completed'),
     )
     dossier = models.ForeignKey(Dossier, on_delete=models.PROTECT, related_name='tasks')

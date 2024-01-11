@@ -1,6 +1,7 @@
 from rest_framework.exceptions import ParseError
 
 from archive.models import Dossier
+from common.services.registries import registry_accepting
 from dossier_requests.models import DossierTask
 
 
@@ -11,11 +12,9 @@ def update_dossiers_in_box_status_and_sector(archive_box):
 
 def update_dossier(instance, validated_data, available_statuses):
     if instance.status not in available_statuses:
-        instance.archive_box = None
-        instance.status = 'Wrong operation/sector'
-        instance.save()
         raise ParseError(f"Dossier should not be on this operation. Dossier current status is {instance.status}")
     else:
+        registry_accepting('rl', instance) #сверка реестра
         instance.archive_box = validated_data.get('archive_box', None)
         instance.status = validated_data.get('status', None)
         instance.save()

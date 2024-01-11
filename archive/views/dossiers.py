@@ -86,11 +86,9 @@ class DossiersListUpdateView(APIView):
 @extend_schema_view(
     create=extend_schema(summary='Add scan to dossier', tags=['Units']),
     list=extend_schema(summary='Dossier scan list', tags=['Units']),
-    retrieve=extend_schema(summary='Scan details', tags=['Units']),
     destroy=extend_schema(summary='Delete scan', tags=['Units']),
 )
 class DossierScanView(mixins.CreateModelMixin,
-                      mixins.RetrieveModelMixin,
                       mixins.ListModelMixin,
                       mixins.DestroyModelMixin,
                       GenericViewSet):

@@ -127,7 +127,7 @@ class DossierScan(models.Model):
     def user_directory_path(self, filename):
         return f'dossier_scans/{self.dossier.barcode}/{filename}'
 
-    dossier = models.ForeignKey(Dossier, on_delete=models.PROTECT, related_name='scans')
+    dossier = models.ForeignKey(Dossier, on_delete=models.CASCADE, related_name='scans')
     file = models.FileField(upload_to=user_directory_path)
     name = models.CharField(max_length=30)
     description = models.TextField(null=True, blank=True)
@@ -147,15 +147,16 @@ class Registry(models.Model):
         ('rl', 'Requests to Logistics'),
         ('rc', 'Requests to Customer'),
     )
-    STATUSES = (
+    REGISTRY_STATUSES = (
         ('creation', 'Creation'),
         ('sent_to_requests', 'Sent to requests'),
+        ('sent_to_logistics', 'Sent to logistics'),
         ('sent_to_customer', 'Sent to customer'),
         ('on_acceptance', 'On acceptance'),
         ('accepted', 'Accepted'),
     )
     type = models.CharField(choices=TYPES)
-    status = models.CharField(choices=STATUSES)
+    status = models.CharField(choices=REGISTRY_STATUSES)
     time_create = models.DateTimeField(auto_now=True)
     dossiers = models.ManyToManyField('Dossier',
                                       verbose_name='Досье',

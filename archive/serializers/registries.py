@@ -1,6 +1,6 @@
 from rest_framework.serializers import ModelSerializer
 
-from archive.models import Registry
+from archive.models import Registry, Dossier
 from dossier_requests.models import DossierTask, DossierRequest
 
 
@@ -18,7 +18,7 @@ class RegistrySerializer(ModelSerializer):
         task_id = request.query_params.get('task_id')
         task = DossierTask.objects.get(id=task_id)
         request = task.request.id
-        dossier = task.dossier.barcode
+        dossier = Dossier.objects.get(barcode=task.dossier.barcode)
         registry_type = validated_data.get('type')
         if registry_type == 'rc':
             dossiers = DossierRequest.objects.get(id=request).dossiers.values('barcode')
@@ -31,9 +31,10 @@ class RegistrySerializer(ModelSerializer):
             instance = Registry.objects.create(**validated_data)
         if dossier not in instance.dossiers.values():
             instance.dossiers.add(dossier)
-        task.task_status = 'add_to_registry'
-        task.dossier.status = 'Add to registry'
+        task.task_status = 'completed'
         task.save()
+        dossier.status = 'Added to registry'
+        dossier.save()
         return instance
 
     def update(self, instance, validated_data):
@@ -43,4 +44,6 @@ class RegistrySerializer(ModelSerializer):
             dossiers.update(status='Sent to requests')
         if status == 'sent_to_customer':
             dossiers.update(status='Sent to customer')
+        if status == 'sent_to_logistics':
+            dossiers.update(status='Sent to logistics')
         return super().update(instance, validated_data)

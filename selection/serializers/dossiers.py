@@ -1,14 +1,14 @@
 from rest_framework.exceptions import ParseError
 
 from archive.models import Dossier, Registry
-from archive.serializers.nested import DossierSerializer, RegistrySerializer
+from archive.serializers.nested import DossierSerializer, RegistryShortSerializer
 from common.services.validators import validate_dossier_barcode
 from dossier_requests.models import DossierTask
 from selection.models import SelectionOrder
 
 
 class DossierSelectingSerializer(DossierSerializer):
-    registries = RegistrySerializer(many=True)
+    registries = RegistryShortSerializer(many=True)
 
     class Meta:
         model = Dossier

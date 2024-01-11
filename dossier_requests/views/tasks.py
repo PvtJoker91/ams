@@ -6,8 +6,9 @@ from rest_framework.response import Response
 from rest_framework.views import APIView
 from rest_framework.viewsets import GenericViewSet
 
-from archive.models import Registry, Dossier
+from archive.models import Dossier, Sector
 from common.pagination import CustomPagination
+from common.services.registries import registry_accepting
 from common.services.statuses import DOSSIER_REQUEST_EXECUTION_AVAILABLE_STATUSES
 from common.services.validators import validate_dossier_barcode
 from common.views.mixins import ExtendedGenericViewSet
@@ -72,7 +73,6 @@ class TaskExecuteView(mixins.ListModelMixin,
     http_method_names = ('get',)
     permission_classes = [IsInRequestsGroup]
 
-
     def get_queryset(self):
         barcode = self.request.query_params.get('dossier_barcode', None)
         if barcode:
@@ -86,17 +86,10 @@ class TaskExecuteView(mixins.ListModelMixin,
                 raise ParseError(
                     f'Dossier should not be on this operation. Dossier current status is {dossier_instance.status}')
             dossier_instance.status = 'Accepted in requests'
+            sector = Sector.objects.get(name='Requests')
+            dossier_instance.current_sector = sector
             dossier_instance.save()
-            registries = Registry.objects.filter(dossiers=dossier_instance, type='lr')
-            if registries.exists():
-                registry = registries.first()
-                if registry.status == 'sent':
-                    registry.status = 'on_acceptance'
-                    registry.save()
-                registry.checked_dossiers.add(dossier_instance)
-                if list(registry.dossiers.values()) == list(registry.checked_dossiers.values()):
-                    registry.status = 'accepted'
-                    registry.save()
+            registry_accepting('lr', dossier_instance)
         return DossierTask.objects.filter(dossier=barcode, task_status__in=('accepted', 'selected'))
 
 

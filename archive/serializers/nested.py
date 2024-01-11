@@ -34,7 +34,7 @@ class ShelfSerializer(serializers.ModelSerializer):
         fields = 'shelf_code',
 
 
-class RegistrySerializer(serializers.ModelSerializer):
+class RegistryShortSerializer(serializers.ModelSerializer):
     class Meta:
         model = Registry
         fields = '__all__'

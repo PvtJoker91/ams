@@ -5,15 +5,14 @@ from rest_framework import mixins, filters
 from rest_framework.exceptions import ParseError
 from rest_framework.viewsets import GenericViewSet
 
-from archive.models import Dossier, Registry
+from archive.models import Dossier
 from common.pagination import CustomPagination
 from common.services.validators import validate_dossier_barcode
-from logistics.permissions import IsInLogisticsGroup
 from dossier_requests.models import DossierTask
+from logistics.permissions import IsInLogisticsGroup
 from selection.models import SelectionOrder
 from selection.serializers.dossiers import DossierSelectingSerializer
 from selection.serializers.orders import SelectionOrderCreateSerializer, SelectionOrderSerializer
-from archive.serializers.registries import RegistrySerializer
 from selection.serializers.tasks import TaskSelectingSerializer
 
 
@@ -81,14 +80,3 @@ class SelectionOrderView(mixins.CreateModelMixin,
         if self.request.method == 'POST':
             return SelectionOrderCreateSerializer
         return SelectionOrderSerializer
-
-
-@extend_schema_view(
-    partial_update=extend_schema(summary='Send registry to requests', tags=['Selection']),
-)
-class RegistrySelectionView(mixins.UpdateModelMixin,
-                            GenericViewSet):
-    queryset = Registry.objects.all()
-    serializer_class = RegistrySerializer
-    permission_classes = [IsInLogisticsGroup]
-    http_method_names = ('patch',)

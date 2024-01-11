@@ -21,12 +21,13 @@ DOSSIER_STATUSES = (None, 'Under registration', 'Is registered',
                     'Checked in a box',
                     'Not found while checking', 'Selected',
                     'Sent to requests', 'Accepted in requests',
-                    'Add to registry', 'Sent to customer',
+                    'Added to registry', 'Sent to customer',
+                    'Sent to logistics',
                     'Wrong operation/sector')
 DOSSIER_REGISTRATION_AVAILABLE_STATUSES = ('Is registered',)
 DOSSIER_COMPLETION_AVAILABLE_STATUSES = (
     None, 'Under completion', 'Is completed', 'Removed from storage', 'Is checked', 'Removed from a box',
-    'Added to a box', 'Not found while checking', 'Checked with a error')
+    'Added to a box', 'Not found while checking', 'Checked with a error', 'Sent to logistics',)
 DOSSIER_CHECKING_AVAILABLE_STATUSES = (
     None, 'Is completed', 'Removed from storage', 'Is checked', 'Under checking', 'Checked in a box',
     'Removed from a box', 'Not found while checking', 'Checked with a error')
