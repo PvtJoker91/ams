@@ -7,12 +7,12 @@ from common.services.validators import validate_ab_barcode, validate_dossier_bar
 class ABSerializer(serializers.ModelSerializer):
     class Meta:
         model = ArchiveBox
-        fields = '__all__'
+        fields = 'barcode',
 
     def validate(self, attrs):
         barcode = attrs['barcode']
         if not validate_ab_barcode(barcode):
-            raise serializers.ValidationError("Wrong barcode format")
+            raise serializers.ValidationError('Wrong barcode format')
         return attrs
 
 

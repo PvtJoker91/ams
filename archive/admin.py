@@ -50,7 +50,7 @@ class ArchiveBoxAdmin(admin.ModelAdmin):
 
 @admin.register(Dossier)
 class DossierAdmin(admin.ModelAdmin):
-    list_display = 'contract', 'barcode', 'current_sector', 'status', 'archive_box', 'storage_address'
+    list_display = 'contract', 'barcode', 'current_sector', 'archive_box', 'status',  'storage_address'
     search_fields = 'contract__contract_number',
 
 

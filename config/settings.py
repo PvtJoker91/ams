@@ -36,6 +36,7 @@ INSTALLED_APPS += [
     'django_filters',
     'corsheaders',
     'djoser',
+    'simple_history',
 ]
 
 # apps
@@ -73,6 +74,7 @@ MIDDLEWARE = [
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
     'corsheaders.middleware.CorsMiddleware',
+    'simple_history.middleware.HistoryRequestMiddleware',
     'silk.middleware.SilkyMiddleware',
 
 ]
@@ -133,6 +135,8 @@ REST_FRAMEWORK = {
     ],
 
     'DEFAULT_SCHEMA_CLASS': 'drf_spectacular.openapi.AutoSchema',
+
+    'DATETIME_FORMAT': '%d.%m.%Y %H:%M'
 
 }
 

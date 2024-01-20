@@ -20,12 +20,13 @@ class DossierSelectingSerializer(DossierSerializer):
         tasks = DossierTask.objects.filter(dossier=instance, task_status='on_selection')
         if not tasks.exists():
             raise ParseError(f'Dossier is not in any task')
-        tasks.update(task_status='selected')
         for task in tasks:
             orders = SelectionOrder.objects.filter(tasks=task)
             for order in orders:
                 order.selected += 1
                 order.save()
+            task.task_status = 'selected'
+            task.save()
         requested_dossiers = Dossier.objects.filter(requests__isnull=False).distinct()
         if Registry.objects.filter(dossiers__in=requested_dossiers, status='creation', type='lr').exists():
             reg = Registry.objects.filter(dossiers__in=requested_dossiers, status='creation', type='lr').first()

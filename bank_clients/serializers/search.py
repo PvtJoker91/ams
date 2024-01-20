@@ -9,4 +9,3 @@ class ContractSearchSerializer(ContractSerializer):
     class Meta:
         model = Contract
         fields = 'id', 'contract_number', 'time_create', 'product', 'client'
-

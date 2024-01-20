@@ -1,5 +1,6 @@
 from django.contrib.auth import get_user_model
 from django.db import models
+from simple_history.models import HistoricalRecords
 
 User = get_user_model()
 
@@ -33,22 +34,22 @@ class StorageShelf(models.Model):
         return self.archive_box.count()
 
 
-def fill_storage():
-    archive_code = '10'
-    levels = ['01', '02']
-    rooms = ['01', '02']
-    rows = ['A', 'B', 'C', 'D']
-    racks = ['01', '02', '03']
-    shelfs = ['01', '02', '03']
-
-    for level in levels:
-        for room in rooms:
-            for row in rows:
-                for rack in racks:
-                    for shelf in shelfs:
-                        StorageShelf.objects.create(archive_id=Archive.objects.all()[0].id,
-                                                    shelf_code=f'{archive_code}.{level}.{room}.-{row}.{rack}.{shelf}')
-    return
+# def fill_storage():
+#     archive_code = '10'
+#     levels = ['01', '02']
+#     rooms = ['01', '02']
+#     rows = ['A', 'B', 'C', 'D']
+#     racks = ['01', '02', '03']
+#     shelfs = ['01', '02', '03']
+#
+#     for level in levels:
+#         for room in rooms:
+#             for row in rows:
+#                 for rack in racks:
+#                     for shelf in shelfs:
+#                         StorageShelf.objects.create(archive_id=Archive.objects.all()[0].id,
+#                                                     shelf_code=f'{archive_code}.{level}.{room}.-{row}.{rack}.{shelf}')
+#     return
 
 
 class Sector(models.Model):
@@ -63,7 +64,8 @@ class Sector(models.Model):
 
 
 class ArchiveBox(models.Model):
-    barcode = models.CharField(max_length=20, verbose_name='Штрих-код АБ')
+    barcode = models.CharField(verbose_name='Штрих-код АБ',
+                               max_length=20)
     current_sector = models.ForeignKey('Sector',
                                        on_delete=models.SET_NULL,
                                        related_name='archive_box',
@@ -76,7 +78,7 @@ class ArchiveBox(models.Model):
     status = models.CharField(max_length=30, verbose_name='Статус бокса', blank=True, null=True)
 
     def __str__(self):
-        return f'{self.barcode}'
+        return self.barcode
 
     class Meta:
         verbose_name = 'Архивный бокс'
@@ -107,13 +109,20 @@ class Dossier(models.Model):
                                     on_delete=models.SET_NULL,
                                     related_name='dossiers',
                                     null=True, blank=True)
+    registerer = models.ForeignKey(User,
+                                   verbose_name='Регистратор',
+                                   on_delete=models.SET_NULL,
+                                   related_name='dossiers',
+                                   null=True, )
+    registration_date = models.DateTimeField(verbose_name='Дата регистрации', auto_now=True)
+    history = HistoricalRecords()
 
     class Meta:
         verbose_name = 'Досье'
         verbose_name_plural = 'Досье'
 
     def __str__(self):
-        return f'{self.barcode}'
+        return self.barcode
 
     @property
     def storage_address(self):
@@ -149,9 +158,7 @@ class Registry(models.Model):
     )
     REGISTRY_STATUSES = (
         ('creation', 'Creation'),
-        ('sent_to_requests', 'Sent to requests'),
-        ('sent_to_logistics', 'Sent to logistics'),
-        ('sent_to_customer', 'Sent to customer'),
+        ('sent', 'Sent'),
         ('on_acceptance', 'On acceptance'),
         ('accepted', 'Accepted'),
     )

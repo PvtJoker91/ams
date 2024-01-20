@@ -1,15 +1,16 @@
 from django.db import models
+from django.utils import timezone
 
 
 class Client(models.Model):
     last_name = models.CharField(max_length=30, verbose_name='Фамилия')
-    name = models.CharField(max_length=30, verbose_name='Имя')
+    first_name = models.CharField(max_length=30, verbose_name='Имя')
     middle_name = models.CharField(max_length=30, blank=True, null=True, verbose_name='Отчество')
     passport = models.CharField(max_length=30, verbose_name='Номер паспорта')
     birthday = models.DateField(verbose_name='Дата рождения')
 
     def __str__(self):
-        return f'{self.last_name} {self.name} {self.middle_name}'
+        return f'{self.last_name} {self.first_name} {self.middle_name}'
 
     class Meta:
         verbose_name = 'Клиент'
@@ -39,14 +40,14 @@ class Contract(models.Model):
         verbose_name_plural = 'Договоры'
 
     def __str__(self):
-        return f'{self.product.name} | {self.client.last_name} {self.client.name}'
+        return f'{self.product.name} | {self.client.last_name} {self.client.first_name}'
 
 
 # Заполнение банковской базы
 
 # def fill_clients(quantity):
 #     import random
-#     import datetime
+#
 #
 #     names = 'Иван,Александр,Дмитрий,Максим,Сергей,Андрей,Алексей,Артём,Илья,Кирилл,Михаил,Никита,Матвей,Роман,Егор,Арсений,Иван,' \
 #             'Денис,Евгений,Даниил,Тимофей,Владислав,Игорь,Владимир,Павел,Руслан,Марк,Константин,Тимур,Олег,Ярослав,Антон,Николай,' \
@@ -64,7 +65,7 @@ class Contract(models.Model):
 #             'Давидович,Платонович,Анатолиевич,Григориевич,Демидович,Данилович,Станиславович,Василиевич,Федорович,Родионович,Леонидович,Одиссеевич,Валериевич,Святославович,Борисович,Эдуардович,Маратович'.split(',')
 #
 #     for client in range(quantity):
-#         Client.objects.create(name=random.choice(names),
+#         Client.objects.create(first_name=random.choice(names),
 #                               last_name=random.choice(second_names),
 #                               middle_name=random.choice(third_names),
 #                               passport=random.randint(1000000, 9999999),
@@ -76,8 +77,8 @@ class Contract(models.Model):
 #     import random
 #
 #     for contract in range(quantity):
-#         Contract.objects.create(product_id=Product.objects.all()[random.randint(0, 4)].id,
+#         Contract.objects.create(product_id=Product.objects.all()[random.randint(0, 3)].id,
 #                               client_id=Client.objects.all()[random.randint(0, 49)].id,
 #                               contract_number=str(random.randint(1000000, 9999999)),
-#                               time_create=datetime.date.today()
+#                               time_create=timezone.now()
 #                               )

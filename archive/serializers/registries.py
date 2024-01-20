@@ -39,11 +39,12 @@ class RegistrySerializer(ModelSerializer):
 
     def update(self, instance, validated_data):
         status = validated_data.get('status', None)
+        reg_type = instance.type
         dossiers = instance.dossiers.values()
-        if status == 'sent_to_requests':
+        if status == 'sent' and reg_type == 'lr':
             dossiers.update(status='Sent to requests')
-        if status == 'sent_to_customer':
+        if status == 'sent' and reg_type == 'rc':
             dossiers.update(status='Sent to customer')
-        if status == 'sent_to_logistics':
+        if status == 'sent' and reg_type == 'rl':
             dossiers.update(status='Sent to logistics')
         return super().update(instance, validated_data)

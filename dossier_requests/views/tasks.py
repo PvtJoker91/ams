@@ -41,7 +41,10 @@ class TaskView(mixins.ListModelMixin,
     permission_classes = [IsInRequestsGroup]
     filter_backends = [DjangoFilterBackend, filters.SearchFilter, filters.OrderingFilter]
     filterset_fields = []
-    ordering_fields = []
+    ordering_fields = [
+        'task_status',
+        'request__service',
+    ]
     ordering = ['request__urgency']
 
     def create(self, request, *args, **kwargs):
@@ -86,7 +89,7 @@ class TaskExecuteView(mixins.ListModelMixin,
                 raise ParseError(
                     f'Dossier should not be on this operation. Dossier current status is {dossier_instance.status}')
             dossier_instance.status = 'Accepted in requests'
-            sector = Sector.objects.get(name='Requests')
+            sector = Sector.objects.get(name='Запросы')
             dossier_instance.current_sector = sector
             dossier_instance.save()
             registry_accepting('lr', dossier_instance)

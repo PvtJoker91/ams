@@ -64,12 +64,14 @@ class SelectionOrderView(mixins.CreateModelMixin,
     pagination_class = CustomPagination
     filter_backends = [DjangoFilterBackend, filters.SearchFilter, filters.OrderingFilter]
     filterset_fields = [
-        'time_create',
+        'executor',
+        'creator',
     ]
     ordering_fields = [
         'time_create',
+        'selected'
     ]
-    ordering = ['-time_create']
+    ordering = ['-time_create', '-selected']
 
     def get_paginated_response(self, data):
         response = super().get_paginated_response(data)

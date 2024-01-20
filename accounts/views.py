@@ -16,7 +16,7 @@ User = get_user_model()
     get=extend_schema(summary='Все пользователи', tags=['Users']),
 )
 class UserListView(generics.ListAPIView):
-    queryset = User.objects.exclude(groups__name='Archive clients')
+    queryset = User.objects.exclude(groups__name='Archive clients').exclude(is_active=False).exclude(is_superuser=True)
     permission_classes = [IsAuthenticated]
     serializer_class = AMSUserSerializer
 

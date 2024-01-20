@@ -1,3 +1,4 @@
+from django.db.models import F
 from django_filters.rest_framework import DjangoFilterBackend
 from drf_spectacular.utils import extend_schema_view, extend_schema
 from rest_framework import mixins, filters, status
@@ -8,7 +9,7 @@ from rest_framework.views import APIView
 from rest_framework.viewsets import GenericViewSet
 
 from archive.models import Dossier, DossierScan
-from archive.serializers.dossiers import DossierSearchSerializer, DossierScanSerializer
+from archive.serializers.dossiers import DossierDetailSerializer, DossierScanSerializer
 from archive.serializers.nested import DossierSerializer
 
 
@@ -19,8 +20,8 @@ from archive.serializers.nested import DossierSerializer
 class DossierView(mixins.ListModelMixin,
                   mixins.RetrieveModelMixin,
                   GenericViewSet):
-    queryset = Dossier.objects.all().select_related('contract')
-    serializer_class = DossierSearchSerializer
+    queryset = Dossier.objects.all()
+    serializer_class = DossierDetailSerializer
     permission_classes = [IsAuthenticated]
     http_method_names = ('get',)
     filter_backends = (DjangoFilterBackend, filters.OrderingFilter, filters.SearchFilter)
@@ -28,12 +29,11 @@ class DossierView(mixins.ListModelMixin,
         'barcode',
         'contract__contract_number',
         'contract__client__last_name',
-        'contract__client__name',
+        'contract__client__first_name',
         'contract__client__middle_name',
         'contract__client__passport',
         'contract__client__birthday',
         'contract__product__name',
-
     ]
     search_fields = [
         'barcode',
@@ -41,6 +41,13 @@ class DossierView(mixins.ListModelMixin,
         'contract__client__passport',
     ]
     ordering = ('contract__client__last_name', 'contract__product__name',)
+
+    def get_queryset(self):
+        return Dossier.objects.all().select_related('contract').annotate(
+            location=F('archive_box__storage_address__shelf_code'))
+
+
+
 
 
 @extend_schema_view(

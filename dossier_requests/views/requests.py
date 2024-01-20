@@ -108,7 +108,7 @@ class MyRequestsView(mixins.ListModelMixin,
         'time_create',
         'time_close',
     ]
-    ordering = ['urgency']
+    ordering = ['-time_create', '-urgency']
 
     def get_queryset(self):
         user = self.request.user

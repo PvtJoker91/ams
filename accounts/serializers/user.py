@@ -19,7 +19,7 @@ class AMSUserSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = User
-        fields = 'id', 'first_name', 'last_name', 'email', 'groups'
+        fields = 'id', 'first_name', 'last_name', 'email', 'groups', 'is_active', 'is_superuser'
 
 
 class RegistrationSerializer(serializers.ModelSerializer):
