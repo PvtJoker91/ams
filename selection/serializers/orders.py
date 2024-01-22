@@ -21,4 +21,11 @@ class SelectionOrderCreateSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = SelectionOrder
-        fields = '__all__'
+        fields = 'tasks', 'creator', 'executor'
+
+    def create(self, validated_data):
+        tasks = validated_data.get('tasks', [])
+        task_ids = [task.id for task in tasks]
+        task_instances = DossierTask.objects.filter(id__in=task_ids)
+        task_instances.update(task_status='on_selection')
+        return super().create(validated_data)

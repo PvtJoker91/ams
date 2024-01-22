@@ -76,6 +76,7 @@ class ArchiveBox(models.Model):
                                         related_name='archive_box',
                                         blank=True, null=True, default=None)
     status = models.CharField(max_length=30, verbose_name='Статус бокса', blank=True, null=True)
+    history = HistoricalRecords(m2m_fields_model_field_name='dossiers')
 
     def __str__(self):
         return self.barcode
@@ -115,7 +116,7 @@ class Dossier(models.Model):
                                    related_name='dossiers',
                                    null=True, )
     registration_date = models.DateTimeField(verbose_name='Дата регистрации', auto_now=True)
-    history = HistoricalRecords()
+    history = HistoricalRecords(excluded_fields=('current_sector',))
 
     class Meta:
         verbose_name = 'Досье'

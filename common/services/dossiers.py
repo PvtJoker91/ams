@@ -14,9 +14,10 @@ def update_dossier(instance, validated_data, available_statuses):
     if instance.status not in available_statuses:
         raise ParseError(f"Dossier should not be on this operation. Dossier current status is {instance.status}")
     else:
-        registry_accepting('rl', instance) #сверка реестра
+        registry_accepting(instance, 'rl') #сверка реестра
         instance.archive_box = validated_data.get('archive_box', None)
         instance.status = validated_data.get('status', None)
+        instance.current_sector = validated_data.get('current_sector', None)
         instance.save()
         return instance
 

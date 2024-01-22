@@ -79,8 +79,7 @@ class TaskExecuteView(mixins.ListModelMixin,
     def get_queryset(self):
         barcode = self.request.query_params.get('dossier_barcode', None)
         if barcode:
-            if not validate_dossier_barcode(barcode):
-                raise ParseError('Wrong barcode format')
+            validate_dossier_barcode(barcode)
             if not DossierTask.objects.filter(dossier=barcode).exists():
                 raise ParseError('Dossier is not in any task')
             if Dossier.objects.filter(barcode=barcode).exists():
@@ -92,42 +91,5 @@ class TaskExecuteView(mixins.ListModelMixin,
             sector = Sector.objects.get(name='Запросы')
             dossier_instance.current_sector = sector
             dossier_instance.save()
-            registry_accepting('lr', dossier_instance)
+            registry_accepting(dossier_instance, 'lr')
         return DossierTask.objects.filter(dossier=barcode, task_status__in=('accepted', 'selected'))
-
-
-@extend_schema_view(
-    put=extend_schema(summary='Update multiple tasks', tags=['Tasks']),
-)
-class TaskListUpdateView(APIView):
-    permission_classes = [IsInRequestsGroup]
-    serializer_class = tasks.TaskUpdateSerializer
-
-    def get_object(self, id):
-        try:
-            return DossierTask.objects.get(id=id)
-        except (DossierTask.DoesNotExist, ValidationError):
-            raise status.HTTP_400_BAD_REQUEST
-
-    def validate_ids(self, id_list):
-        for id in id_list:
-            try:
-                DossierTask.objects.get(id=id)
-            except (DossierTask.DoesNotExist, ValidationError):
-                raise status.HTTP_400_BAD_REQUEST
-        return True
-
-    def put(self, request, *args, **kwargs):
-        data = request.data
-        id_list = [i['id'] for i in data]
-        self.validate_ids(id_list)
-        instances = []
-        for temp_dict in data:
-            id = temp_dict['id']
-            status = temp_dict['task_status']
-            obj = self.get_object(id)
-            obj.task_status = status
-            obj.save()
-            instances.append(obj)
-        serializer = self.serializer_class(instances, many=True)
-        return Response(serializer.data)

@@ -9,7 +9,7 @@ AB_COMPLETION_AVAILABLE_STATUSES = (
     None, 'Under completion', 'Is completed', 'Under storage', 'Removed from storage', 'Is checked')
 AB_CHECKING_AVAILABLE_STATUSES = (
     None, 'Is registered', 'Is completed', 'Under storage', 'Removed from storage', 'Is checked', 'Under checking',
-    'Checked with a error')
+    'Checked with an error')
 AB_PLACEMENT_AVAILABLE_STATUSES = (None, 'Is registered', 'Is completed', 'Removed from storage', 'Is checked')
 
 DOSSIER_STATUSES = (None, 'Under registration', 'Is registered',

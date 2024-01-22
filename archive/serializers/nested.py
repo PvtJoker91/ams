@@ -11,8 +11,7 @@ class ABSerializer(serializers.ModelSerializer):
 
     def validate(self, attrs):
         barcode = attrs['barcode']
-        if not validate_ab_barcode(barcode):
-            raise serializers.ValidationError('Wrong barcode format')
+        validate_ab_barcode(barcode)
         return attrs
 
 
@@ -23,8 +22,7 @@ class DossierSerializer(serializers.ModelSerializer):
 
     def validate(self, attrs):
         barcode = attrs['barcode']
-        if not validate_dossier_barcode(barcode):
-            raise serializers.ValidationError("Wrong barcode format")
+        validate_dossier_barcode(barcode)
         return attrs
 
 

@@ -23,8 +23,7 @@ class DossierCompletionView(mixins.UpdateModelMixin,
     def update(self, request, *args, **kwargs):
         barcode = kwargs.get('barcode', None)
         if barcode:
-            if not validate_dossier_barcode(barcode):
-                raise ParseError({'validation_error': 'Wrong barcode format'})
+            validate_dossier_barcode(barcode)
         return super().update(request, *args, **kwargs)
 
 

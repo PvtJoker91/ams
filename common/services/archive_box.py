@@ -26,7 +26,11 @@ def update_box_under_checking(instance, validated_data):
         instance.status = validated_data.get('status')
         instance.current_sector = validated_data.get('current_sector')
         instance.save()
-        update_dossiers_in_box_status_and_sector(instance)
+        if instance.status == 'Checked with an error':
+            instance.dossiers.filter(status='Under checking').update(status='Not found while checking',
+                                                                     archive_box=None)
+        instance.dossiers.all().update(status=instance.status,
+                                       current_sector=instance.current_sector)
     else:
         raise ParseError(f"Archive box should not be on this operation. Box current operation is {instance.status}")
     return instance

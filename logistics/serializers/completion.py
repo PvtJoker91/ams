@@ -23,3 +23,4 @@ class ABCompletionSerializer(ABSerializer):
 
     def create(self, validated_data):
         return create_or_update_box(validated_data, AB_COMPLETION_AVAILABLE_STATUSES)
+

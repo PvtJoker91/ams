@@ -54,6 +54,7 @@ class DossierAdmin(admin.ModelAdmin):
     search_fields = 'contract__contract_number',
 
 
+
 @admin.register(DossierScan)
 class DossierScanAdmin(admin.ModelAdmin):
     list_display = 'dossier', 'file', 'name', 'description'
@@ -61,6 +62,6 @@ class DossierScanAdmin(admin.ModelAdmin):
 
 @admin.register(Registry)
 class RegistryAdmin(admin.ModelAdmin):
-    list_display = 'type',
+    list_display = 'type', 'status', 'time_create'
     search_fields = 'dossier__barcode',
     filter_horizontal = 'dossiers', 'checked_dossiers'

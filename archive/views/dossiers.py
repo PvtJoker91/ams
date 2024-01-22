@@ -47,49 +47,6 @@ class DossierView(mixins.ListModelMixin,
             location=F('archive_box__storage_address__shelf_code'))
 
 
-
-
-
-@extend_schema_view(
-    put=extend_schema(summary='Dossiers list to update', tags=['Units']),
-)
-class DossiersListUpdateView(APIView):
-    permission_classes = [IsAuthenticated]
-    serializer_class = DossierSerializer
-
-    def get_object(self, barcode):
-        try:
-            return Dossier.objects.get(barcode=barcode)
-        except (Dossier.DoesNotExist, ValidationError):
-            raise status.HTTP_400_BAD_REQUEST
-
-    def validate_barcodes(self, barcode_list):
-        for barcode in barcode_list:
-            try:
-                Dossier.objects.get(barcode=barcode)
-            except (Dossier.DoesNotExist, ValidationError):
-                raise status.HTTP_400_BAD_REQUEST
-        return True
-
-    def put(self, request, *args, **kwargs):
-        data = request.data
-        barcode_list = [i['barcode'] for i in data]
-        self.validate_barcodes(barcode_list)
-        instances = []
-        for temp_dict in data:
-            barcode = temp_dict['barcode']
-            archive_box = temp_dict['archive_box']
-            status = temp_dict['status']
-            obj = self.get_object(barcode)
-            obj.archive_box = archive_box
-            obj.status = status
-            obj.save()
-            instances.append(obj)
-        serializer = self.serializer_class(instances, many=True)
-        return Response(serializer.data)
-
-
-
 @extend_schema_view(
     create=extend_schema(summary='Add scan to dossier', tags=['Units']),
     list=extend_schema(summary='Dossier scan list', tags=['Units']),

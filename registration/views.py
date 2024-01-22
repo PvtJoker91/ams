@@ -42,8 +42,7 @@ class DossierRegView(mixins.CreateModelMixin,
     def list(self, request, *args, **kwargs):
         barcode = request.GET.get('barcode', None)
         if barcode:
-            if not validate_dossier_barcode(barcode):
-                raise ParseError({'validation_error': 'Wrong barcode format'})
+            validate_dossier_barcode(barcode)
         queryset = self.filter_queryset(self.get_queryset())
         if queryset:
             instance = queryset.first()

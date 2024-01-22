@@ -2,7 +2,7 @@ from django.urls import path, include
 from rest_framework import routers
 
 from dossier_requests.views.requests import MyRequestsView, RequestView
-from dossier_requests.views.tasks import TaskListUpdateView, TaskView, TaskExecuteView
+from dossier_requests.views.tasks import TaskView, TaskExecuteView
 
 router = routers.SimpleRouter()
 router.register(r'requests', RequestView, basename='requests')
@@ -12,5 +12,4 @@ router.register(r'execute-tasks', TaskExecuteView, basename='tasks_to_execute')
 
 urlpatterns = [
     path('requests/', include(router.urls)),
-    path('requests/tasks/list_update', TaskListUpdateView.as_view(), name='task_list_update'),
 ]

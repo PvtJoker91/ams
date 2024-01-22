@@ -22,15 +22,12 @@ class DossierRequest(models.Model):
     )
 
     REQUEST_STATUSES = (
-        ('creation', 'Creation'),
-        ('sent_for_processing', 'Sent for processing'),
-        ('cancelled', 'Cancelled'),
-        ('accepted', 'Accepted'),
-        ('sent_for_selection', 'Sent for selection'),
-        ('on_selection', 'On selection'),
-        ('sent_for_scanning', 'Sent for scanning'),
-        ('on_scanning', 'On scanning'),
-        ('complete', 'Complete'),
+        ('creation', 'Создание'),
+        ('sent_for_processing', 'Отправлена в архив'),
+        ('cancelled', 'Отменена'),
+        ('accepted', 'Принята к исполнению'),
+        ('in_progress', 'В работе'),
+        ('complete', 'Завершена'),
     )
 
     status = models.CharField(choices=REQUEST_STATUSES)
@@ -45,6 +42,10 @@ class DossierRequest(models.Model):
     time_create = models.DateTimeField(null=True, blank=True)
     time_close = models.DateTimeField(null=True, blank=True)
     dossiers = models.ManyToManyField(Dossier, related_name='requests', blank=True)
+
+    class Meta:
+        verbose_name = 'Заявка на досье'
+        verbose_name_plural = 'Заявки на досье'
 
     def __str__(self):
         return f'{self.service} {self.client_department}'
@@ -86,11 +87,15 @@ class DossierTask(models.Model):
         ('rejected', 'Rejected'),
         ('completed', 'Completed'),
     )
-    dossier = models.ForeignKey(Dossier, on_delete=models.PROTECT, related_name='tasks')
+    dossier = models.ForeignKey(Dossier, on_delete=models.CASCADE, related_name='tasks')
     request = models.ForeignKey(DossierRequest, on_delete=models.CASCADE, related_name='tasks')
     executor = models.ForeignKey(User, on_delete=models.SET_NULL, related_name='tasks', null=True)
     task_status = models.CharField(choices=TASK_STATUSES)
     commentary = models.TextField(null=True, blank=True)
+
+    class Meta:
+        verbose_name = 'Задание по заявке'
+        verbose_name_plural = 'Задания по заявкам'
 
     def __str__(self):
         return self.task_status

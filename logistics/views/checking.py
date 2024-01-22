@@ -25,8 +25,7 @@ class DossierCheckView(mixins.UpdateModelMixin,
     def retrieve(self, request, *args, **kwargs):
         barcode = kwargs.get('barcode', None)
         if barcode:
-            if not validate_dossier_barcode(barcode):
-                raise ParseError({'validation_error': 'Wrong barcode format'})
+            validate_dossier_barcode(barcode)
         instance = self.get_object()
         if instance.status not in DOSSIER_CHECKING_AVAILABLE_STATUSES:
             raise ParseError(f"Dossier should not be on this operation. Dossier current status is {instance.status}")
@@ -35,8 +34,7 @@ class DossierCheckView(mixins.UpdateModelMixin,
     def update(self, request, *args, **kwargs):
         barcode = kwargs.get('barcode', None)
         if barcode:
-            if not validate_dossier_barcode(barcode):
-                raise ParseError({'validation_error': 'Wrong barcode format'})
+            validate_dossier_barcode(barcode)
         return super().update(request, *args, **kwargs)
 
 
