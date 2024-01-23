@@ -1,16 +1,14 @@
 from django.db.models import F
 from django_filters.rest_framework import DjangoFilterBackend
 from drf_spectacular.utils import extend_schema_view, extend_schema
-from rest_framework import mixins, filters, status
-from rest_framework.exceptions import ValidationError
-from rest_framework.permissions import IsAuthenticated, AllowAny
-from rest_framework.response import Response
-from rest_framework.views import APIView
+from rest_framework import mixins, filters
+from rest_framework.permissions import IsAuthenticated
 from rest_framework.viewsets import GenericViewSet
 
 from archive.models import Dossier, DossierScan
-from archive.serializers.dossiers import DossierDetailSerializer, DossierScanSerializer
-from archive.serializers.nested import DossierSerializer
+from archive.serializers.dossiers import DossierDetailSerializer, DossierScanSerializer, DossierListSerializer
+from common.filters import CustomFilter
+from common.views.mixins import ExtendedGenericViewSet
 
 
 @extend_schema_view(
@@ -19,12 +17,16 @@ from archive.serializers.nested import DossierSerializer
 )
 class DossierView(mixins.ListModelMixin,
                   mixins.RetrieveModelMixin,
-                  GenericViewSet):
+                  ExtendedGenericViewSet):
     queryset = Dossier.objects.all()
     serializer_class = DossierDetailSerializer
+    multi_serializer_class = {
+        'list': DossierListSerializer,
+        'retrieve': DossierDetailSerializer,
+    }
     permission_classes = [IsAuthenticated]
     http_method_names = ('get',)
-    filter_backends = (DjangoFilterBackend, filters.OrderingFilter, filters.SearchFilter)
+    filter_backends = (CustomFilter, filters.OrderingFilter)
     filterset_fields = [
         'barcode',
         'contract__contract_number',
@@ -35,16 +37,13 @@ class DossierView(mixins.ListModelMixin,
         'contract__client__birthday',
         'contract__product__name',
     ]
-    search_fields = [
-        'barcode',
-        'contract__contract_number',
-        'contract__client__passport',
-    ]
+
     ordering = ('contract__client__last_name', 'contract__product__name',)
 
     def get_queryset(self):
         return Dossier.objects.all().select_related('contract').annotate(
             location=F('archive_box__storage_address__shelf_code'))
+
 
 
 @extend_schema_view(

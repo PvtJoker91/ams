@@ -76,7 +76,7 @@ class ArchiveBox(models.Model):
                                         related_name='archive_box',
                                         blank=True, null=True, default=None)
     status = models.CharField(max_length=30, verbose_name='Статус бокса', blank=True, null=True)
-    history = HistoricalRecords(m2m_fields_model_field_name='dossiers')
+    history = HistoricalRecords()
 
     def __str__(self):
         return self.barcode
@@ -125,12 +125,16 @@ class Dossier(models.Model):
     def __str__(self):
         return self.barcode
 
+
+
     @property
     def storage_address(self):
         if self.archive_box:
             return self.archive_box.storage_address
         else:
             return None
+
+
 
 
 class DossierScan(models.Model):
@@ -186,3 +190,4 @@ class Registry(models.Model):
 
     def __str__(self):
         return f'{self.type}'
+
