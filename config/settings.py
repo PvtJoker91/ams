@@ -16,8 +16,22 @@ SECRET_KEY = env.str('SECRET_KEY')
 DEBUG = env.bool('DEBUG', default=True)
 ALLOWED_HOSTS = env.str('ALLOWED_HOSTS', default='').split(' ')
 
-
 INTERNAL_IPS = ['127.0.0.1',]
+
+# sending emails
+
+EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
+EMAIL_HOST = env.str('EMAIL_HOST', default='')
+EMAIL_PORT = env.int('EMAIL_PORT', default=587)
+EMAIL_USE_TLS = env.bool('EMAIL_USE_TLS', default=True)
+
+EMAIL_HOST_USER = env.str('EMAIL_HOST_USER', default='')
+EMAIL_HOST_PASSWORD = env.str('EMAIL_HOST_PASSWORD', default='')
+
+DEFAULT_FROM_EMAIL = EMAIL_HOST_USER
+SERVER_EMAIL = EMAIL_HOST_USER
+EMAIL_ADMIN = env.list('EMAIL_ADMIN', default='')
+
 
 
 # base
@@ -217,13 +231,13 @@ SPECTACULAR_SETTINGS = {
 #######################
 # DJOSER
 #######################
-# DJOSER = {
-#     'PASSWORD_RESET_CONFIRM_URL': '#/password/reset/confirm/{uid}/{token}',
-#     'USERNAME_RESET_CONFIRM_URL': '#/username/reset/confirm/{uid}/{token}',
-#     'ACTIVATION_URL': '#/activate/{uid}/{token}',
-#     'SEND_ACTIVATION_EMAIL': False,
-#     'SERIALIZERS': {},
-# }
+DJOSER = {
+    'PASSWORD_RESET_CONFIRM_URL': 'localhost:5173/reset-password/{uid}/{token}',
+    'USERNAME_RESET_CONFIRM_URL': '#/username/reset/confirm/{uid}/{token}',
+    'ACTIVATION_URL': '#/activate/{uid}/{token}',
+    'SEND_ACTIVATION_EMAIL': False,
+    'SERIALIZERS': {},
+}
 
 SIMPLE_JWT = {
     'ACCESS_TOKEN_LIFETIME': timedelta(minutes=30),
@@ -235,7 +249,6 @@ SIMPLE_JWT = {
     'VERIFYING_KEY': None,
     'AUDIENCE': None,
     'ISSUER': None,
-
 
 
     'AUTH_HEADER_TYPES': ('Bearer',),

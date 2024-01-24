@@ -22,61 +22,17 @@ class AMSUserSerializer(serializers.ModelSerializer):
         fields = 'id', 'first_name', 'last_name', 'email', 'groups', 'is_active', 'is_superuser'
 
 
-class RegistrationSerializer(serializers.ModelSerializer):
-    password = serializers.CharField(
-        style={'input_type': 'password'}, write_only=True
-    )
-
-    class Meta:
-        model = User
-        fields = (
-            'id',
-            'first_name',
-            'last_name',
-            'email',
-            'password',
-        )
-
-    def validate_email(self, value):
-        email = value.lower()
-        if User.objects.filter(email=email).exists():
-            raise ParseError(
-                'Пользователь с такой почтой уже зарегистрирован.'
-            )
-        return email
-
-    def validate_password(self, value):
-        validate_password(value)
-        return value
-
-    def create(self, validated_data):
-        user = User.objects.create_user(**validated_data)
-        return user
+class PasswordRecoverySerializer(serializers.Serializer):
+    email = serializers.EmailField()
 
 
-class ChangePasswordSerializer(serializers.ModelSerializer):
-    old_password = serializers.CharField(write_only=True)
+class PasswordConfirmResetSerializer(serializers.Serializer):
+    uidb64 = serializers.CharField()
+    token = serializers.CharField()
     new_password = serializers.CharField(write_only=True)
 
-    class Meta:
-        model = User
-        fields = ('old_password', 'new_password')
-
     def validate(self, attrs):
-        user = self.instance
-        old_password = attrs.pop('old_password')
-        if not user.check_password(old_password):
-            raise ParseError(
-                'Проверьте правильность текущего пароля.'
-            )
-        return attrs
+        new_password = attrs.get('new_password')
+        validate_password(new_password)
+        return super().validate(attrs)
 
-    def validate_new_password(self, value):
-        validate_password(value)
-        return value
-
-    def update(self, instance, validated_data):
-        password = validated_data.pop('new_password')
-        instance.set_password(password)
-        instance.save()
-        return instance
