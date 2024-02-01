@@ -20,5 +20,7 @@ class ABDetailView(mixins.RetrieveModelMixin,
     lookup_field = 'barcode'
 
     def get_queryset(self):
-        return ArchiveBox.objects.all().annotate(location=F('storage_address__shelf_code'),
-                                                 dossier_count=Count('dossiers'))
+        return ArchiveBox.objects.select_related(
+            'current_sector').annotate(
+            location=F('storage_address__shelf_code'),
+            dossier_count=Count('dossiers')).all()

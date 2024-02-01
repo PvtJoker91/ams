@@ -1,2 +1,0 @@
-# ams
-archive management system

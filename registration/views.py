@@ -24,6 +24,9 @@ class ABRegView(mixins.CreateModelMixin,
     lookup_field = 'barcode'
     http_method_names = ('post', 'delete')
 
+    def get_queryset(self):
+        return ArchiveBox.objects.all().select_related('storage_address')
+
 
 @extend_schema_view(
     create=extend_schema(summary='Dossier registration to archive box', tags=['Registration']),
@@ -31,13 +34,16 @@ class ABRegView(mixins.CreateModelMixin,
 class DossierRegView(mixins.CreateModelMixin,
                      mixins.ListModelMixin,
                      GenericViewSet):
-    queryset = Dossier.objects.all().select_related('current_sector')
+    queryset = Dossier.objects.all()
     permission_classes = [IsInRegistrationGroup]
     serializer_class = DossierRegSerializer
     lookup_field = 'barcode'
     filter_backends = [DjangoFilterBackend]
     filterset_fields = ['barcode', ]
     http_method_names = ('get', 'post',)
+
+    def get_queryset(self):
+        return Dossier.objects.all()
 
     def list(self, request, *args, **kwargs):
         barcode = request.GET.get('barcode', None)

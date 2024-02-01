@@ -1,12 +1,11 @@
 from django.db.models import F
-from django_filters.rest_framework import DjangoFilterBackend
 from drf_spectacular.utils import extend_schema_view, extend_schema
 from rest_framework import mixins, filters
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.viewsets import GenericViewSet
 
 from archive.models import Dossier, DossierScan
-from archive.serializers.dossiers import DossierDetailSerializer, DossierScanSerializer, DossierListSerializer
+from archive.serializers import dossiers
 from common.filters import CustomFilter
 from common.views.mixins import ExtendedGenericViewSet
 
@@ -19,10 +18,10 @@ class DossierView(mixins.ListModelMixin,
                   mixins.RetrieveModelMixin,
                   ExtendedGenericViewSet):
     queryset = Dossier.objects.all()
-    serializer_class = DossierDetailSerializer
+    serializer_class = dossiers.DossierDetailSerializer
     multi_serializer_class = {
-        'list': DossierListSerializer,
-        'retrieve': DossierDetailSerializer,
+        'list': dossiers.DossierListSerializer,
+        'retrieve': dossiers.DossierDetailSerializer,
     }
     permission_classes = [IsAuthenticated]
     http_method_names = ('get',)
@@ -41,25 +40,37 @@ class DossierView(mixins.ListModelMixin,
     ordering = ('contract__client__last_name', 'contract__product__name',)
 
     def get_queryset(self):
-        return Dossier.objects.all().select_related('contract').annotate(
-            location=F('archive_box__storage_address__shelf_code'))
+        return Dossier.objects.select_related('contract__client', 'contract__product').annotate(
+            location=F('archive_box__storage_address__shelf_code')).all()
 
+
+@extend_schema_view(
+    retrieve=extend_schema(summary='Dossier with scans', tags=['Units']),
+)
+class DossierScansView(mixins.RetrieveModelMixin,
+                       GenericViewSet):
+    queryset = Dossier.objects.all()
+    serializer_class = dossiers.DossierScansSerializer
+    permission_classes = [IsAuthenticated]
+
+    def get_queryset(self):
+        return Dossier.objects.select_related('contract__client', 'contract__product').all()
 
 
 @extend_schema_view(
     create=extend_schema(summary='Add scan to dossier', tags=['Units']),
-    list=extend_schema(summary='Dossier scan list', tags=['Units']),
+    list=extend_schema(summary='Scan list', tags=['Units']),
     destroy=extend_schema(summary='Delete scan', tags=['Units']),
 )
-class DossierScanView(mixins.CreateModelMixin,
-                      mixins.ListModelMixin,
-                      mixins.DestroyModelMixin,
-                      GenericViewSet):
-    serializer_class = DossierScanSerializer
+class ScanView(mixins.CreateModelMixin,
+               mixins.ListModelMixin,
+               mixins.DestroyModelMixin,
+               GenericViewSet):
+    serializer_class = dossiers.ScanSerializer
     queryset = DossierScan.objects.all()
 
     def get_queryset(self):
         dossier = self.request.query_params.get('dossier')
         if dossier:
-            return DossierScan.objects.filter(dossier=dossier)
-        return DossierScan.objects.all()
+            return DossierScan.objects.filter(dossier=dossier).select_related('dossier__contract', 'uploader')
+        return DossierScan.objects.select_related('dossier__contract', 'uploader').all()

@@ -43,6 +43,9 @@ class RegistryView(mixins.CreateModelMixin,
         response.data['current_page'] = self.request.query_params.get('page', 1)
         return response
 
+    def get_queryset(self):
+        return Registry.objects.all().prefetch_related('dossiers', 'checked_dossiers')
+
     # def get_queryset(self):
     #     user = self.request.user
     #     if user:

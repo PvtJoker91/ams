@@ -1,7 +1,6 @@
 from django.contrib.auth import get_user_model
 from django.contrib.auth.password_validation import validate_password
 from rest_framework import serializers
-from rest_framework.exceptions import ParseError
 
 from accounts.models.users import AMSGroup
 
@@ -35,4 +34,3 @@ class PasswordConfirmResetSerializer(serializers.Serializer):
         new_password = attrs.get('new_password')
         validate_password(new_password)
         return super().validate(attrs)
-

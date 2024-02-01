@@ -1,8 +1,8 @@
 
-from archive.models import Registry
+from archive.models import Registry, Dossier
 
 
-def registry_accepting(dossier, reg_type):
+def registry_accepting(dossier: Dossier, reg_type: str):
     registries = Registry.objects.filter(status__in=('sent', 'on_acceptance'), dossiers=dossier, type=reg_type)
 
     if registries.exists():

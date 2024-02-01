@@ -5,11 +5,19 @@
     <inspection_tool class="PyPackageRequirementsInspection" enabled="true" level="WARNING" enabled_by_default="true">
       <option name="ignoredPackages">
         <value>
-          <list size="2">
+          <list size="3">
             <item index="0" class="java.lang.String" itemvalue="environ" />
             <item index="1" class="java.lang.String" itemvalue="flufl.lock" />
+            <item index="2" class="java.lang.String" itemvalue="ninja" />
           </list>
         </value>
+      </option>
+    </inspection_tool>
+    <inspection_tool class="PyPep8Inspection" enabled="true" level="WEAK WARNING" enabled_by_default="true">
+      <option name="ignoredErrors">
+        <list>
+          <option value="E303" />
+        </list>
       </option>
     </inspection_tool>
     <inspection_tool class="PyPep8NamingInspection" enabled="true" level="WEAK WARNING" enabled_by_default="true">
@@ -31,6 +39,17 @@
           <option value="store.models.BookCategory.*" />
           <option value="common_archive.models.ArchiveBox.*" />
           <option value="common_archive.statuses.REGISTRATION_AVAILEBLE" />
+          <option value="archive.models.Registry.*" />
+          <option value="orders.models.DossiersOrder.*" />
+          <option value="selection.models.SelectionOrder.*" />
+          <option value="dossier_requests.models.DossierTask.*" />
+          <option value="archive.models.Sector.*" />
+          <option value="archive.models.ArchiveBox.*" />
+          <option value="archive.models.DossierScan.*" />
+          <option value="archive.models.Dossier.*" />
+          <option value="bank_clients.models.Client.*" />
+          <option value="bank_clients.models.Product.*" />
+          <option value="bank_clients.models.Contract.*" />
         </list>
       </option>
     </inspection_tool>

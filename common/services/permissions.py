@@ -1,4 +1,4 @@
-LOGISTICS_PERMISSION_GROUP = ('Logistics', 'Logistics Managers', 'Registration Managers', 'Requests Managers')
-REGISTRATION_PERMISSION_GROUP = ('Registration', 'Logistics Managers', 'Registration Managers', 'Requests Managers')
-REQUESTS_PERMISSION_GROUP = ('Requests', 'Logistics Managers', 'Registration Managers', 'Requests Managers')
+LOGISTICS_PERMISSION_GROUP = ('Логисты',)
+REGISTRATION_PERMISSION_GROUP = ('Регистраторы',)
+REQUESTS_PERMISSION_GROUP = ('Исполнители запросов',)
 

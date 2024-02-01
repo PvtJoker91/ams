@@ -27,4 +27,4 @@ class ContractView(mixins.ListModelMixin,
                      'contract_number']
 
     def get_queryset(self):
-        return Contract.objects.all().select_related('product').select_related('client')
+        return Contract.objects.all().select_related('product', 'client')

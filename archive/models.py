@@ -34,22 +34,22 @@ class StorageShelf(models.Model):
         return self.archive_box.count()
 
 
-# def fill_storage():
-#     archive_code = '10'
-#     levels = ['01', '02']
-#     rooms = ['01', '02']
-#     rows = ['A', 'B', 'C', 'D']
-#     racks = ['01', '02', '03']
-#     shelfs = ['01', '02', '03']
-#
-#     for level in levels:
-#         for room in rooms:
-#             for row in rows:
-#                 for rack in racks:
-#                     for shelf in shelfs:
-#                         StorageShelf.objects.create(archive_id=Archive.objects.all()[0].id,
-#                                                     shelf_code=f'{archive_code}.{level}.{room}.-{row}.{rack}.{shelf}')
-#     return
+def fill_storage():
+    archive_code = '10'
+    levels = ['01', '02']
+    rooms = ['01', '02']
+    rows = ['A', 'B', 'C', 'D']
+    racks = ['01', '02', '03']
+    shelfs = ['01', '02', '03']
+
+    for level in levels:
+        for room in rooms:
+            for row in rows:
+                for rack in racks:
+                    for shelf in shelfs:
+                        StorageShelf.objects.create(archive_id=Archive.objects.all()[0].id,
+                                                    shelf_code=f'{archive_code}.{level}.{room}.-{row}.{rack}.{shelf}')
+    return
 
 
 class Sector(models.Model):
@@ -125,16 +125,12 @@ class Dossier(models.Model):
     def __str__(self):
         return self.barcode
 
-
-
     @property
     def storage_address(self):
         if self.archive_box:
             return self.archive_box.storage_address
         else:
             return None
-
-
 
 
 class DossierScan(models.Model):
@@ -146,6 +142,11 @@ class DossierScan(models.Model):
     name = models.CharField(max_length=30)
     description = models.TextField(null=True, blank=True)
     date_upload = models.DateTimeField(auto_now=True)
+    uploader = models.ForeignKey(User,
+                                 verbose_name='Загрузчик',
+                                 on_delete=models.CASCADE,
+                                 related_name='scans',
+                                 null=True,)
 
     class Meta:
         verbose_name = 'Скан-копия'
@@ -190,4 +191,3 @@ class Registry(models.Model):
 
     def __str__(self):
         return f'{self.type}'
-

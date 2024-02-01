@@ -19,7 +19,6 @@ class DossierCheckView(mixins.UpdateModelMixin,
     queryset = Dossier.objects.all().select_related('current_sector')
     serializer_class = DossierCheckSerializer
     permission_classes = [IsInLogisticsGroup]
-    lookup_field = 'barcode'
     http_method_names = ('get', 'patch',)
 
     def retrieve(self, request, *args, **kwargs):

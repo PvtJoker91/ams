@@ -10,7 +10,7 @@ def update_dossiers_in_box_status_and_sector(archive_box):
                                                            current_sector=archive_box.current_sector)
 
 
-def update_dossier(instance, validated_data, available_statuses):
+def update_dossier(instance: Dossier, validated_data: dict, available_statuses: tuple) -> Dossier:
     if instance.status not in available_statuses:
         raise ParseError(f"Dossier should not be on this operation. Dossier current status is {instance.status}")
     else:
@@ -22,8 +22,11 @@ def update_dossier(instance, validated_data, available_statuses):
         return instance
 
 
-def check_dossier_in_task(instance):
+def check_dossier_in_task(instance: Dossier) -> bool:
     return DossierTask.objects.filter(dossier=instance).exists()
+
+
+
 
 # единая проверка досье на всех операциях -  надо сделать!
 def check_dossier_status(instance, available_statuses):

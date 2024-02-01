@@ -16,7 +16,6 @@ class RequestUpdateSerializer(serializers.ModelSerializer):
     class Meta:
         model = DossierRequest
         fields = 'status', 'dossiers', 'closer', 'close_reason', 'time_create', 'time_close'
-        
 
 
 class RequestListSerializer(serializers.ModelSerializer):
@@ -27,7 +26,7 @@ class RequestListSerializer(serializers.ModelSerializer):
         model = DossierRequest
         fields = '__all__'
 
-    def get_deadline(self, instance) -> str:
+    def get_deadline(self, instance: DossierRequest):
         return deadline(instance)
 
 
@@ -41,7 +40,7 @@ class RequestRetrieveSerializer(serializers.ModelSerializer):
         model = DossierRequest
         fields = '__all__'
 
-    def get_deadline(self, instance) -> str:
+    def get_deadline(self, instance: DossierRequest):
         return deadline(instance)
 
 

@@ -7,7 +7,9 @@ from archive.serializers.nested import DossierSerializer, ABSerializer, SectorSe
 from bank_clients.serializers.search import ContractSearchSerializer
 
 
-class DossierScanSerializer(serializers.ModelSerializer):
+class ScanSerializer(serializers.ModelSerializer):
+    uploader = AMSUserShortSerializer()
+
     class Meta:
         model = DossierScan
         fields = '__all__'
@@ -19,6 +21,20 @@ class DossierListSerializer(DossierSerializer):
     class Meta:
         model = Dossier
         fields = ('barcode', 'contract',)
+
+
+class DossierScansSerializer(DossierSerializer):
+    contract = ContractSearchSerializer()
+    registerer = AMSUserShortSerializer()
+    scans = ScanSerializer(many=True)
+
+    class Meta:
+        model = Dossier
+        fields = ('barcode',
+                  'contract',
+                  'registerer',
+                  'registration_date',
+                  'scans')
 
 
 class DossierDetailSerializer(DossierSerializer):

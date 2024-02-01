@@ -5,7 +5,7 @@ from common.services.dossiers import update_dossiers_in_box_status_and_sector
 from common.services.statuses import AB_CHECKING_AVAILABLE_STATUSES
 
 
-def create_or_update_box(validated_data, available_statuses):
+def create_or_update_box(validated_data: dict, available_statuses: tuple) -> ArchiveBox:
     if ArchiveBox.objects.filter(barcode=validated_data.get('barcode')).exists():
         archive_box = ArchiveBox.objects.get(barcode=validated_data.get('barcode'))
         if archive_box.status in available_statuses:
@@ -21,7 +21,7 @@ def create_or_update_box(validated_data, available_statuses):
     return archive_box
 
 
-def update_box_under_checking(instance, validated_data):
+def update_box_under_checking(instance: ArchiveBox, validated_data: dict) -> ArchiveBox:
     if instance.status in AB_CHECKING_AVAILABLE_STATUSES:
         instance.status = validated_data.get('status')
         instance.current_sector = validated_data.get('current_sector')
