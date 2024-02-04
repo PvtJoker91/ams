@@ -1,7 +1,7 @@
 from rest_framework import serializers
 
 from archive.models import ArchiveBox, Dossier, StorageShelf, Registry, Sector
-from common.services.validators import validate_ab_barcode, validate_dossier_barcode
+from common.validators import validate_ab_barcode, validate_dossier_barcode
 
 
 class ABSerializer(serializers.ModelSerializer):

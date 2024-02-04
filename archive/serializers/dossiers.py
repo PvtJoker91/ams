@@ -90,3 +90,11 @@ class DossierDetailSerializer(DossierSerializer):
                 return None
         except ObjectDoesNotExist:
             return None
+
+
+class DossierScanCountSerializer(DossierSerializer):
+    scan_count = serializers.CharField(read_only=True)
+
+    class Meta:
+        model = Dossier
+        fields = 'barcode', 'scan_count'

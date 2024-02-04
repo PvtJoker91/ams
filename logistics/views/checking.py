@@ -1,11 +1,9 @@
 from drf_spectacular.utils import extend_schema_view, extend_schema
 from rest_framework import mixins
-from rest_framework.exceptions import ParseError
 from rest_framework.viewsets import GenericViewSet
 
 from archive.models import Dossier, ArchiveBox
-from common.services.statuses import DOSSIER_CHECKING_AVAILABLE_STATUSES
-from common.services.validators import validate_dossier_barcode
+from common.validators import validate_dossier_barcode
 from logistics.permissions import IsInLogisticsGroup
 from logistics.serializers.checking import DossierCheckSerializer, ABCheckSerializer
 
@@ -21,20 +19,12 @@ class DossierCheckView(mixins.UpdateModelMixin,
     permission_classes = [IsInLogisticsGroup]
     http_method_names = ('get', 'patch',)
 
-    def retrieve(self, request, *args, **kwargs):
-        barcode = kwargs.get('barcode', None)
-        if barcode:
-            validate_dossier_barcode(barcode)
-        instance = self.get_object()
-        if instance.status not in DOSSIER_CHECKING_AVAILABLE_STATUSES:
-            raise ParseError(f"Dossier should not be on this operation. Dossier current status is {instance.status}")
-        return super().retrieve(request, *args, **kwargs)
-
     def update(self, request, *args, **kwargs):
-        barcode = kwargs.get('barcode', None)
+        barcode = kwargs.get('pk', None)
         if barcode:
             validate_dossier_barcode(barcode)
         return super().update(request, *args, **kwargs)
+
 
 
 @extend_schema_view(partial_update=extend_schema(summary='Box checking', tags=['Logistics']), )

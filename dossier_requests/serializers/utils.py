@@ -25,5 +25,4 @@ def deadline(instance: DossierRequest):
     if deadline.time() > workday_end.time():
         deadline = deadline.replace(hour=workday_end.hour, minute=workday_end.minute, second=workday_end.second)
     deadline += timezone.timedelta(hours=remaining_hours)
-    print(type(deadline))
     return deadline.__format__('%d.%m.%Y %H:%M')

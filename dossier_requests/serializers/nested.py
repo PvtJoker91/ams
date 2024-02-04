@@ -1,12 +1,12 @@
 from django.contrib.auth import get_user_model
-from rest_framework.serializers import ModelSerializer
+from rest_framework import serializers
 
 from dossier_requests.models import DossierRequest, DossierTask
 
 User = get_user_model()
 
 
-class UserShortSerializer(ModelSerializer):
+class UserShortSerializer(serializers.ModelSerializer):
     class Meta:
         model = User
         fields = ('last_name',
@@ -14,7 +14,11 @@ class UserShortSerializer(ModelSerializer):
                   'email')
 
 
-class RequestShortSerializer(ModelSerializer):
+class RequestShortSerializer(serializers.ModelSerializer):
+    status = serializers.CharField(source='get_status_display')
+    service = serializers.CharField(source='get_service_display')
+    urgency = serializers.CharField(source='get_urgency_display')
+
     class Meta:
         model = DossierRequest
         fields = (
@@ -27,7 +31,7 @@ class RequestShortSerializer(ModelSerializer):
         )
 
 
-class TaskShortSerializer(ModelSerializer):
+class TaskShortSerializer(serializers.ModelSerializer):
     class Meta:
         model = DossierTask
         fields = (

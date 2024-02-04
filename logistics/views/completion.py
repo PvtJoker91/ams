@@ -1,10 +1,9 @@
 from drf_spectacular.utils import extend_schema_view, extend_schema
 from rest_framework import mixins
-from rest_framework.exceptions import ParseError
 from rest_framework.viewsets import GenericViewSet
 
 from archive.models import Dossier, ArchiveBox
-from common.services.validators import validate_dossier_barcode
+from common.validators import validate_dossier_barcode
 from logistics.permissions import IsInLogisticsGroup
 from logistics.serializers.completion import DossierCompletionSerializer, ABCompletionSerializer
 

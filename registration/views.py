@@ -6,8 +6,8 @@ from rest_framework.response import Response
 from rest_framework.viewsets import GenericViewSet
 
 from archive.models import ArchiveBox, Dossier
-from common.services.statuses import DOSSIER_REGISTRATION_AVAILABLE_STATUSES
-from common.services.validators import validate_dossier_barcode
+from common.statuses import DOSSIER_REGISTRATION_AVAILABLE_STATUSES
+from common.validators import validate_dossier_barcode, validate_dossier_status
 from registration.permissions import IsInRegistrationGroup
 from registration.serializers import ABRegSerializer, DossierRegSerializer
 
@@ -52,14 +52,11 @@ class DossierRegView(mixins.CreateModelMixin,
         queryset = self.filter_queryset(self.get_queryset())
         if queryset:
             instance = queryset.first()
-            if instance.status not in DOSSIER_REGISTRATION_AVAILABLE_STATUSES:
-                raise ParseError(
-                    {'dossier_status_error':
-                         f"Dossier should not be on this operation. Dossier current status is {instance.status}"})
-            elif instance.archive_box:
+            validate_dossier_status(instance, DOSSIER_REGISTRATION_AVAILABLE_STATUSES)
+            if instance.archive_box:
                 raise ParseError(
                     {'dossier_box_error':
-                         f"Dossier is already registred in archive box {instance.archive_box.barcode}"})
+                         f"Досье уже зарегистрировано в боксе {instance.archive_box.barcode}"})
 
         serializer = self.get_serializer(queryset, many=True)
         return Response(serializer.data)

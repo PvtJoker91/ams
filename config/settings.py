@@ -5,7 +5,6 @@ import environ
 
 
 root = environ.Path(__file__) - 2
-print(root)
 env = environ.Env()
 environ.Env.read_env(env.str(root(), '.env'))
 
@@ -261,6 +260,9 @@ SIMPLE_JWT = {
 INTERNAL_IPS = [
     '127.0.0.1',
 ]
+
+CELERY_BROKER_URL = 'redis://redis:6379/0'
+
 # LOGGING = {
 #     'version': 1,
 #     'handlers': {

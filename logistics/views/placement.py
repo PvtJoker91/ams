@@ -6,7 +6,7 @@ from rest_framework.views import APIView
 
 from archive.models import ArchiveBox, StorageShelf
 from common.services.dossiers import update_dossiers_in_box_status_and_sector
-from common.services.statuses import AB_PLACEMENT_AVAILABLE_STATUSES
+from common.statuses import AB_PLACEMENT_AVAILABLE_STATUSES
 from logistics.permissions import IsInLogisticsGroup
 from logistics.serializers.placement import ABPlacementSerializer
 

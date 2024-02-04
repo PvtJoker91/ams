@@ -2,7 +2,7 @@ from rest_framework.exceptions import ParseError
 
 from archive.models import ArchiveBox
 from common.services.dossiers import update_dossiers_in_box_status_and_sector
-from common.services.statuses import AB_CHECKING_AVAILABLE_STATUSES
+from common.statuses import AB_CHECKING_AVAILABLE_STATUSES
 
 
 def create_or_update_box(validated_data: dict, available_statuses: tuple) -> ArchiveBox:

@@ -1,8 +1,9 @@
-from django.db.models import Q
+import datetime
+
 from rest_framework import serializers
 
-from dossier_requests.serializers.nested import RequestShortSerializer
 from dossier_requests.models import DossierTask
+from dossier_requests.serializers.nested import RequestShortSerializer
 
 
 class TaskCreateSerializer(serializers.ModelSerializer):
@@ -36,8 +37,8 @@ class TaskUpdateSerializer(serializers.ModelSerializer):
         return instance
 
 
-
 class TaskListSerializer(serializers.ModelSerializer):
+    task_status = serializers.CharField(source='get_task_status_display')
     deadline = serializers.SerializerMethodField()
     request = RequestShortSerializer()
 
@@ -45,12 +46,13 @@ class TaskListSerializer(serializers.ModelSerializer):
         model = DossierTask
         fields = '__all__'
 
-    def get_deadline(self, instance) -> str:
+    def get_deadline(self, instance) -> datetime.datetime:
         request = instance.request
-        return request.deadline
+        return request.deadline.__format__('%d.%m.%Y %H:%M')
 
 
 class TaskRetrieveSerializer(serializers.ModelSerializer):
+    task_status = serializers.CharField(source='get_task_status_display')
     request = RequestShortSerializer()
 
     class Meta:

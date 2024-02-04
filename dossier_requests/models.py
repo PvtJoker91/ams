@@ -9,16 +9,16 @@ User = get_user_model()
 
 class DossierRequest(models.Model):
     SERVICE_TYPES = (
-        ('full_scanning', 'Full scanning'),
-        ('scanning_by_documents', 'Scanning by documents'),
-        ('temporary_issuance', 'Temporary issuance'),
-        ('unrecoverable_issuance', 'Unrecoverable issuance')
+        ('full_scanning', 'Сканирование в один файл'),
+        ('scanning_by_documents', 'Сканирование по документам'),
+        ('temporary_issuance', 'Выдача во временное пользование'),
+        ('unrecoverable_issuance', 'Безвозвратная выдача')
     )
 
     URGENCY_HOURS = (
-        ('40', 'Standard - 40 w.h.'),
-        ('16', 'Increased - 16 w.h.'),
-        ('8', 'High - 8 w.h.'),
+        ('40', 'Стандартная - 40 р.ч.'),
+        ('16', 'Повышенная - 16 р.ч.'),
+        ('8', 'Срочная - 8 р.ч.'),
     )
 
     REQUEST_STATUSES = (
@@ -31,12 +31,12 @@ class DossierRequest(models.Model):
     )
 
     status = models.CharField(choices=REQUEST_STATUSES)
+    service = models.CharField(choices=SERVICE_TYPES)
+    urgency = models.CharField(choices=URGENCY_HOURS)
     creator = models.ForeignKey(User, on_delete=models.SET_NULL, related_name='requests', null=True)
     closer = models.ForeignKey(User, on_delete=models.SET_NULL, related_name='closed_requests', blank=True, null=True)
     client = models.CharField(max_length=50)
     client_department = models.CharField(max_length=100)
-    service = models.CharField(choices=SERVICE_TYPES)
-    urgency = models.CharField(choices=URGENCY_HOURS)
     description = models.TextField()
     close_reason = models.TextField(null=True, blank=True)
     time_create = models.DateTimeField(null=True, blank=True)
@@ -80,12 +80,12 @@ class DossierRequest(models.Model):
 
 class DossierTask(models.Model):
     TASK_STATUSES = (
-        ('accepted', 'Accepted'),
-        ('cancelled', 'Cancelled'),
-        ('on_selection', 'On selection'),
-        ('selected', 'Selected'),
-        ('rejected', 'Rejected'),
-        ('completed', 'Completed'),
+        ('accepted', 'Принято в работу'),
+        ('cancelled', 'Отменено'),
+        ('on_selection', 'На подборе'),
+        ('selected', 'Подобрано'),
+        ('rejected', 'Отклонено'),
+        ('completed', 'Исполнено'),
     )
     dossier = models.ForeignKey(Dossier, on_delete=models.CASCADE, related_name='tasks')
     request = models.ForeignKey(DossierRequest, on_delete=models.CASCADE, related_name='tasks')

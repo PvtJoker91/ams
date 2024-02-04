@@ -1,0 +1,35 @@
+version: '3.9'
+
+services:
+  celery-worker:
+    build:
+      context: ..
+      dockerfile: Dockerfile
+    container_name: celery-worker
+    command: celery -A celery_app.app worker --loglevel=info
+    env_file:
+      - ../.env
+    depends_on:
+      - main-app
+      - postgres
+      - redis
+    volumes:
+      - ..:/app/
+
+  redis:
+    image: "redis:latest"
+    container_name: redis
+    ports:
+      - "6379:6379"
+
+  flower:
+    image: "mher/flower:latest"
+    container_name: flower
+    ports:
+      - "5555:5555"
+    depends_on:
+      - main-app
+      - celery-worker
+    environment:
+      - CELERY_BROKER_URL=redis://redis:6379/0
+      - FLOWER_PORT=5555

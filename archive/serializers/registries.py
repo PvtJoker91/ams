@@ -1,10 +1,13 @@
-from rest_framework.serializers import ModelSerializer
+from rest_framework import serializers
 
 from archive.models import Registry, Dossier
 from dossier_requests.models import DossierTask, DossierRequest
 
 
-class RegistrySerializer(ModelSerializer):
+class RegistrySerializer(serializers.ModelSerializer):
+    type = serializers.CharField(source='get_type_display')
+    status = serializers.CharField(source='get_status_display')
+
     class Meta:
         model = Registry
         fields = '__all__'

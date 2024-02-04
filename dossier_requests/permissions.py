@@ -1,6 +1,6 @@
 from rest_framework.permissions import IsAuthenticated
 
-from common.services.permissions import REQUESTS_PERMISSION_GROUP
+from common.permissions import REQUESTS_PERMISSION_GROUP
 
 
 class IsInRequestsGroup(IsAuthenticated):

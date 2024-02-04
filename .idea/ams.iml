@@ -1,7 +1,18 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <module type="PYTHON_MODULE" version="4">
   <component name="NewModuleRootManager">
-    <content url="file://$MODULE_DIR$" />
+    <content url="file://$MODULE_DIR$">
+      <excludeFolder url="file://$MODULE_DIR$/accounts/migrations" />
+      <excludeFolder url="file://$MODULE_DIR$/api/migrations" />
+      <excludeFolder url="file://$MODULE_DIR$/archive/migrations" />
+      <excludeFolder url="file://$MODULE_DIR$/bank_clients/migrations" />
+      <excludeFolder url="file://$MODULE_DIR$/common/migrations" />
+      <excludeFolder url="file://$MODULE_DIR$/dossier_requests/migrations" />
+      <excludeFolder url="file://$MODULE_DIR$/logistics/migrations" />
+      <excludeFolder url="file://$MODULE_DIR$/media" />
+      <excludeFolder url="file://$MODULE_DIR$/registration/migrations" />
+      <excludeFolder url="file://$MODULE_DIR$/selection/migrations" />
+    </content>
     <orderEntry type="jdk" jdkName="Poetry (ams)" jdkType="Python SDK" />
     <orderEntry type="sourceFolder" forTests="false" />
   </component>

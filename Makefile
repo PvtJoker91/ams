@@ -6,6 +6,8 @@ LOGS = docker logs
 ENV = --env-file .env
 APP_FILE = docker_compose/app.yaml
 APP_CONTAINER = ams
+WORKERS_FILE = docker_compose/workers.yaml
+WORKER_CONTAINER = celery-worker
 MANAGE_PY = python manage.py
 
 .PHONY: storages
@@ -19,21 +21,26 @@ storages-down:
 .PHONY: postgres
 postgres:
 	${EXEC} ${DB_CONTAINER} psql
+
 .PHONY: storages-logs
 storages-logs:
 	${LOGS} ${DB_CONTAINER} -f
 
 .PHONY: app
 app:
-	${DC} -f ${APP_FILE} -f ${STORAGES_FILE} ${ENV} up --build -d
+	${DC} -f ${APP_FILE} -f ${WORKERS_FILE} -f ${STORAGES_FILE} ${ENV} up --build -d
 
 .PHONY: app-logs
 app-logs:
 	${LOGS} ${APP_CONTAINER} -f
 
+.PHONY: worker-logs
+worker-logs:
+	${LOGS} ${WORKER_CONTAINER} -f
+
 .PHONY: app-down
 app-down:
-	${DC} -f ${APP_FILE} -f ${STORAGES_FILE} down
+	${DC} -f ${APP_FILE} -f ${WORKERS_FILE} -f ${STORAGES_FILE} down
 
 .PHONY: migrate
 migrate:
@@ -46,7 +53,6 @@ migrations:
 .PHONY: superuser
 superuser:
 	${EXEC} ${APP_CONTAINER} ${MANAGE_PY} createsuperuser
-
 
 .PHONY: collectstatic
 collectstatic:

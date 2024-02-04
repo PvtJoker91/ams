@@ -2,12 +2,11 @@ from django.db.models import F
 from django_filters.rest_framework import DjangoFilterBackend
 from drf_spectacular.utils import extend_schema_view, extend_schema
 from rest_framework import mixins, filters
-from rest_framework.exceptions import ParseError
 from rest_framework.viewsets import GenericViewSet
 
 from archive.models import Dossier
 from common.pagination import CustomPagination
-from common.services.validators import validate_dossier_barcode
+from common.validators import validate_dossier_barcode
 from dossier_requests.models import DossierTask
 from logistics.permissions import IsInLogisticsGroup
 from selection.models import SelectionOrder

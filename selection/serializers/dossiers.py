@@ -3,7 +3,7 @@ from rest_framework.exceptions import ParseError
 
 from archive.models import Dossier, Registry
 from archive.serializers.nested import DossierSerializer, RegistryShortSerializer
-from common.services.validators import validate_dossier_barcode
+from common.validators import validate_dossier_barcode
 from dossier_requests.models import DossierTask
 from selection.models import SelectionOrder
 
@@ -15,7 +15,7 @@ class DossierSelectingSerializer(DossierSerializer):
         model = Dossier
         fields = 'barcode', 'current_sector', 'status', 'archive_box', 'registries'
 
-    def get_registries(self, instance):
+    def get_registries(self, instance) -> list:
         registries_instances = instance.registries.filter(status='creation', type='lr')
         return RegistryShortSerializer(registries_instances, many=True).data
 
