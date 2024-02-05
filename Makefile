@@ -4,8 +4,8 @@ EXEC = docker exec -it
 DB_CONTAINER = ams-db
 LOGS = docker logs
 ENV = --env-file .env
-APP_FILE = docker_compose/app.yaml
-APP_CONTAINER = ams
+BACK_FILE = docker_compose/back.yaml
+BACK_CONTAINER = ams-back
 WORKERS_FILE = docker_compose/workers.yaml
 WORKER_CONTAINER = celery-worker
 MANAGE_PY = python manage.py
@@ -28,11 +28,11 @@ storages-logs:
 
 .PHONY: app
 app:
-	${DC} -f ${APP_FILE} -f ${WORKERS_FILE} -f ${STORAGES_FILE} ${ENV} up --build -d
+	${DC} -f ${BACK_FILE} ${env}  -f ${STORAGES_FILE} ${ENV} up --build -d
 
 .PHONY: app-logs
 app-logs:
-	${LOGS} ${APP_CONTAINER} -f
+	${LOGS} ${BACK_CONTAINER} -f
 
 .PHONY: worker-logs
 worker-logs:
@@ -40,24 +40,28 @@ worker-logs:
 
 .PHONY: app-down
 app-down:
-	${DC} -f ${APP_FILE} -f ${WORKERS_FILE} -f ${STORAGES_FILE} down
+	${DC} -f ${BACK_FILE} -f ${STORAGES_FILE} down --remove-orphans
+
+.PHONY: db-logs
+db-logs:
+	${DC} -f ${STORAGES_FILE} logs -f
 
 .PHONY: migrate
 migrate:
-	${EXEC} ${APP_CONTAINER} ${MANAGE_PY} migrate
+	${EXEC} ${BACK_CONTAINER} ${MANAGE_PY} migrate
 
 .PHONY: migrations
 migrations:
-	${EXEC} ${APP_CONTAINER} ${MANAGE_PY} makemigrations
+	${EXEC} ${BACK_CONTAINER} ${MANAGE_PY} makemigrations
 
 .PHONY: superuser
 superuser:
-	${EXEC} ${APP_CONTAINER} ${MANAGE_PY} createsuperuser
+	${EXEC} ${BACK_CONTAINER} ${MANAGE_PY} createsuperuser
 
 .PHONY: collectstatic
 collectstatic:
-	${EXEC} ${APP_CONTAINER} ${MANAGE_PY} collectstatic
+	${EXEC} ${BACK_CONTAINER} ${MANAGE_PY} collectstatic
 
 .PHONY: shell
 shell:
-	${EXEC} ${APP_CONTAINER} ${MANAGE_PY} shell
+	${EXEC} ${BACK_CONTAINER} ${MANAGE_PY} shell

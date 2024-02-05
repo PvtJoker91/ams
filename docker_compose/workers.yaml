@@ -10,7 +10,7 @@ services:
     env_file:
       - ../.env
     depends_on:
-      - main-app
+      - ams-back
       - postgres
       - redis
     volumes:
@@ -28,7 +28,7 @@ services:
     ports:
       - "5555:5555"
     depends_on:
-      - main-app
+      - ams-back
       - celery-worker
     environment:
       - CELERY_BROKER_URL=redis://redis:6379/0
