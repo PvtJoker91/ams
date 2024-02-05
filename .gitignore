@@ -1,7 +1,8 @@
 #Frontend
-
-/ams_front/
-
+/node_modules/
+node_modules
+node_modules/
+ams_front/node_modules
 
 
 # Byte-compiled / optimized / DLL files

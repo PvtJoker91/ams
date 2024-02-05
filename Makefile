@@ -5,7 +5,9 @@ DB_CONTAINER = ams-db
 LOGS = docker logs
 ENV = --env-file .env
 BACK_FILE = docker_compose/back.yaml
+FRONT_FILE = docker_compose/front.yaml
 BACK_CONTAINER = ams-back
+FRONT_CONTAINER = ams-front
 WORKERS_FILE = docker_compose/workers.yaml
 WORKER_CONTAINER = celery-worker
 MANAGE_PY = python manage.py
@@ -28,11 +30,15 @@ storages-logs:
 
 .PHONY: app
 app:
-	${DC} -f ${BACK_FILE} ${env}  -f ${STORAGES_FILE} ${ENV} up --build -d
+	${DC} -f ${BACK_FILE} ${env} -f ${FRONT_FILE} -f ${STORAGES_FILE} ${ENV} up --build -d
 
-.PHONY: app-logs
-app-logs:
+.PHONY: back-logs
+back-logs:
 	${LOGS} ${BACK_CONTAINER} -f
+
+.PHONY: front-logs
+front-logs:
+	${LOGS} ${FRONT_CONTAINER} -f
 
 .PHONY: worker-logs
 worker-logs:
@@ -40,7 +46,7 @@ worker-logs:
 
 .PHONY: app-down
 app-down:
-	${DC} -f ${BACK_FILE} -f ${STORAGES_FILE} down --remove-orphans
+	${DC} -f ${BACK_FILE} -f ${FRONT_FILE} -f ${STORAGES_FILE} down --remove-orphans
 
 .PHONY: db-logs
 db-logs:

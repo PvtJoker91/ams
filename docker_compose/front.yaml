@@ -1,0 +1,14 @@
+version: '3.9'
+
+services:
+  ams-front:
+    build:
+      context: ../ams_front
+      dockerfile: Dockerfile
+    container_name: ams-front
+    command: 'npm run dev -- --host 0.0.0.0 --port 5173'
+    ports:
+      - '5173:5173'
+    volumes:
+      - ../ams_front/src:/app/src
+      - ../ams_front/index.html:/app/index.html

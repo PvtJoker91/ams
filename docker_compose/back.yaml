@@ -25,6 +25,7 @@ services:
       - static_volume:/static
     depends_on:
       - ams-back
+      - ams-front
     ports:
       - "80:80"
 
