@@ -45,7 +45,7 @@ class TaskView(mixins.ListModelMixin,
         'task_status',
         'request__service',
     ]
-    ordering = ['request__urgency']
+    ordering = ['-task_status', 'request__urgency', ]
 
     def create(self, request, *args, **kwargs):
         data = request.data
@@ -91,4 +91,5 @@ class TaskExecuteView(mixins.ListModelMixin,
                     dossier_instance.current_sector = sector
                     dossier_instance.save()
                     registry_accepting(dossier_instance, 'lr')
-        return DossierTask.objects.filter(dossier=barcode, task_status__in=('accepted', 'selected'))
+        return DossierTask.objects.filter(dossier=barcode, task_status__in=('accepted', 'selected')
+                                          ).select_related('request')

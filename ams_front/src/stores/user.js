@@ -97,7 +97,7 @@ export const useUserStore = defineStore({
         },
 
         refreshToken() {
-            axios.post('http://127.0.0.1:8000/api/auth/jwt/refresh/', {
+            axios.post('/api/auth/jwt/refresh/', {
                 refresh: this.user.refresh
             })
                 .then((response) => {

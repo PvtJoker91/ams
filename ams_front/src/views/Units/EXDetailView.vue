@@ -1,4 +1,5 @@
 <template>
+  <div v-if="userStore.user.isAuthenticated && userStore.user.id">
   <div v-if="!showCard" class="bg-white border border-gray-200 rounded-lg flex items-center justify-center h-80">
       <form @submit.prevent="unitSearch">
           <label class="block mb-2 text-xl font-bold">Для просмотра информации о единице хранения</label><br>
@@ -174,12 +175,32 @@
         </div>
       </div>
     </div>
+  </div>
+  <div v-else>
+    <AccessDenied />
+  </div>
+    
 </template>
-  
+    
+    
   <script>
-  import axios from 'axios';
+  import axios from 'axios'
+  import AccessDenied from '../../components/AccessDenied.vue';
+  import { useUserStore } from '../../stores/user'
   
-  export default {
+  export default{
+
+    components: {
+      AccessDenied,
+  },
+
+    setup() {
+          const userStore = useUserStore()
+          return {
+              userStore
+          }
+      },
+
     data() {
       return {
         showCard:false,

@@ -1,4 +1,5 @@
 import { createRouter, createWebHistory } from 'vue-router'
+import NotFoundView from '../views/NotFoundView.vue'
 import HomeView from '../views/HomeView.vue'
 import ResetPasswordView from '../views/ResetPasswordView.vue'
 import ArchiveHomeView from '../views/ArchiveHomeView.vue'
@@ -29,6 +30,11 @@ import DossierScansView from '../views/Units/DossierScansView.vue'
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
   routes: [
+    {
+      path: '/:pathMatch(.*)*',
+      name: 'notFound',
+      component: NotFoundView
+    },
     {
       path: '/',
       name: 'home',
@@ -154,7 +160,6 @@ const router = createRouter({
       name: 'dossierScans',
       component: DossierScansView
     },
-
   ]
 })
 

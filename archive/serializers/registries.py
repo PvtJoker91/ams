@@ -1,12 +1,11 @@
 from rest_framework import serializers
 
 from archive.models import Registry, Dossier
+from common.services.dossiers import update_dossiers_in_registry
 from dossier_requests.models import DossierTask, DossierRequest
 
 
 class RegistrySerializer(serializers.ModelSerializer):
-    type = serializers.CharField(source='get_type_display')
-    status = serializers.CharField(source='get_status_display')
 
     class Meta:
         model = Registry
@@ -23,12 +22,13 @@ class RegistrySerializer(serializers.ModelSerializer):
         request = task.request.id
         dossier = Dossier.objects.get(barcode=task.dossier.barcode)
         registry_type = validated_data.get('type')
+        registries = []
         if registry_type == 'rc':
             dossiers = DossierRequest.objects.get(id=request).dossiers.values('barcode')
             registries = Registry.objects.filter(status='creation', dossiers__in=dossiers, type='rc')
         elif registry_type == 'rl':
             registries = Registry.objects.filter(status='creation', type='rl')
-        if registries.exists():
+        if registries and registries.exists():
             instance = registries.first()
         else:
             instance = Registry.objects.create(**validated_data)
@@ -41,13 +41,8 @@ class RegistrySerializer(serializers.ModelSerializer):
         return instance
 
     def update(self, instance, validated_data):
-        status = validated_data.get('status', None)
+        reg_status = validated_data.get('status', None)
         reg_type = instance.type
         dossiers = instance.dossiers.values()
-        if status == 'sent' and reg_type == 'lr':
-            dossiers.update(status='Sent to requests')
-        if status == 'sent' and reg_type == 'rc':
-            dossiers.update(status='Sent to customer')
-        if status == 'sent' and reg_type == 'rl':
-            dossiers.update(status='Sent to logistics')
+        update_dossiers_in_registry(dossiers, reg_status, reg_type)
         return super().update(instance, validated_data)

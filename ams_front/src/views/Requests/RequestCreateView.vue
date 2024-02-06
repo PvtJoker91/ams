@@ -1,5 +1,5 @@
 <template>    
-    <div class="space-y-3">
+    <div v-if="userStore.user.isAuthenticated && userStore.user.id" class="space-y-3">
         <h2 class="text-3xl font-bold mb-4">Создание заявки в архив</h2>
         <div class="p-6 bg-white border border-gray-200 rounded-lg">
             <form @submit.prevent="saveRequest()">
@@ -57,25 +57,31 @@
             </form>
         </div>
     </div>
-
-
+    <div v-else>
+      <AccessDenied />
+    </div>
+    
   </template>
-  
-  
-  <script>
-  import axios from 'axios'
+    
+    
+<script>
+import axios from 'axios'
+import AccessDenied from '../../components/AccessDenied.vue';
+import { useUserStore } from '../../stores/user'
 
-  import { useUserStore } from '../../stores/user'
-  
-  export default{
+export default{
+
+    components: {
+    AccessDenied,
+},
+
     setup() {
         const userStore = useUserStore()
-
         return {
-            userStore,
+            userStore
         }
     },
-    
+
     data(){
         return{
         services:[

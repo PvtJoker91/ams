@@ -15,9 +15,6 @@ class UserShortSerializer(serializers.ModelSerializer):
 
 
 class RequestShortSerializer(serializers.ModelSerializer):
-    status = serializers.CharField(source='get_status_display')
-    service = serializers.CharField(source='get_service_display')
-    urgency = serializers.CharField(source='get_urgency_display')
 
     class Meta:
         model = DossierRequest

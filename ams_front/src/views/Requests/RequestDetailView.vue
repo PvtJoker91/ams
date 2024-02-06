@@ -1,8 +1,9 @@
 <template>
-    <div class="space-y-3">
-    <h2 class="text-3xl font-bold mb-4">Заявка №{{ currentRequest.id }}  {{ currentRequest.time_create }}</h2>
+    <div v-if="userStore.user.isAuthenticated && userStore.user.id" class="space-y-3">
+        <div v-if="Object.keys(currentRequest).length!==0">
+        <h2 class="text-3xl font-bold mb-4">Заявка №{{ currentRequest.id }}  {{ currentRequest.time_create }}</h2>
             <div class="p-8 bg-white rounded-lg">
-                <div v-if="currentRequest.status == 'Создание'" class="flex items-center">
+                <div v-if="currentRequest.status == 'creation'" class="flex items-center">
                     <button class="mr-4 rounded-md bg-blue-600 px-3 py-2 text-sm font-semibold text-white shadow-sm hover:bg-blue-500" 
                          @click="showSearch=false">Детали заявки
                     </button>
@@ -66,26 +67,26 @@
 
                     
                     <div class="flex items-center">    
-                        <div v-if="currentRequest.status == 'Отправлена в архив' && !hasGroup('Archive clients')" class="flex items-center">
+                        <div v-if="currentRequest.status == 'sent_for_processing' && !hasGroup('Не сотрудники архива')" class="flex items-center">
                             <button @click="requestAccept()" class="float-left ml-2 mt-4 rounded-md bg-green-600 px-3 py-2 text-sm font-semibold text-white shadow-sm hover:bg-green-500" >
                                 Подтвердить заявку
                             </button>
                         </div>
 
                     
-                        <div v-if="this.addedDossiers.length !==0 && currentRequest.status == 'Создание'">
+                        <div v-if="this.addedDossiers.length !==0 && currentRequest.status == 'creation'">
                             <button @click="requestSend()" class="float-left ml-2 mt-4 rounded-md bg-green-600 px-3 py-2 text-sm font-semibold text-white shadow-sm hover:bg-green-500">
                                     Отправить заявку
                             </button>
                         </div>
                             
-                        <div v-if="currentRequest.status == 'Создание'">
+                        <div v-if="currentRequest.status == 'creation'">
                             <button @click="requestDelete()" class="float-left ml-2 mt-4 rounded-md bg-red-600 px-3 py-2 text-sm font-semibold text-white shadow-sm hover:bg-red-500">
                                 Удалить заявку
                             </button>
                         </div>
                         
-                        <div v-if="currentRequest.status !== 'Создание' && currentRequest.status !== 'Отменена' && currentRequest.status !== 'Завершена'">
+                        <div v-if="currentRequest.status !== 'creation' && currentRequest.status !== 'cancelled' && currentRequest.status !== 'complete'">
                             <button v-if="!showDialog" @click="showDialog=true" class="float-left ml-2 mt-4 rounded-md bg-red-600 px-3 py-2 text-sm font-semibold text-white shadow-sm hover:bg-red-500">
                                 Закрыть заявку
                             </button>
@@ -114,8 +115,8 @@
                                 </RouterLink>
 
 
-                                <a v-if="currentRequest.status !== 'Создание'">   ({{ dossier.scan_count }})</a>
-                                <button v-if="currentRequest.status == 'Создание'"
+                                <a v-if="currentRequest.status !== 'creation'">   ({{ dossier.scan_count }})</a>
+                                <button v-if="currentRequest.status == 'creation'"
                                 @click="addRemoveDossierToRequest(dossier)" class="ml-3 rounded-md bg-indigo-600 px-1 py-0.2 text-xs font-semibold text-white shadow-sm hover:bg-indigo-500">
                                     Remove
                                 </button>
@@ -242,30 +243,37 @@
                         </div>
                     </div>
                 </div>
+            </div>
         </div>
     </div>
-</template>
+    <div v-else>
+      <AccessDenied />
+    </div>
     
-    <script>
-    import axios from 'axios';
+  </template>
+    
+    
+  <script>
+    import axios from 'axios'
+    import AccessDenied from '../../components/AccessDenied.vue';
     import { useUserStore } from '../../stores/user'
+    
+    export default{
 
+      components: {
+        AccessDenied,
+    },
 
-    export default {
         setup() {
             const userStore = useUserStore()
             return {
-                userStore,
+                userStore
             }
         },
 
-
         data() {
             return {
-                currentRequest:{
-                    creator:'',
-                    closer:''
-                },
+                currentRequest:{},
                 showSearch: false,
                 showDialog: false,
                 foundDossiers:[],
@@ -274,11 +282,11 @@
                 errArray: [],
                 products:[
                   {name:''},
-                  {name:'BSA'},
-                  {name:'Credit'},
-                  {name:'Credit Card'},
-                  {name:'Deposit'},
-                  {name:'Debet Card'}
+                  {name:'ДБО'},
+                  {name:'Кредит'},
+                  {name:'Кредитная карта'},
+                  {name:'Вклад'},
+                  {name:'Дебетовая карта'}
 
               ],
                 dossier:{
@@ -327,11 +335,11 @@
                     '?barcode='+ this.dossier.barcode +
                     '&contract__contract_number='+this.dossier.contract.contract_number +
                     '&contract__client__last_name='+this.dossier.contract.client.last_name +
-                    '&contract__client__name='+this.dossier.contract.client.name +
+                    '&contract__client__first_name='+this.dossier.contract.client.name +
                     '&contract__client__middle_name='+this.dossier.contract.client.middle_name +
                     '&contract__client__passport='+this.dossier.contract.client.passport + 
                     '&contract__client__birthday='+this.dossier.contract.client.birthday +
-                    '&contract__product__id='+this.dossier.contract.product.id + 
+                    '&contract__product__name='+this.dossier.contract.product.name + 
                     '&limit=10',
                     ).then(response =>{
                             console.log(response.data);
@@ -358,7 +366,7 @@
             },
             
             requestSend(){
-                if(this.addedDossiers.length !==0 && this.currentRequest.status == 'Создание'){
+                if(this.addedDossiers.length !==0 && this.currentRequest.status == 'creation'){
                 this.currentRequest.dossiers = this.getID(this.addedDossiers)
                 this.currentRequest.status = 'sent_for_processing'
                 this.currentRequest.time_create = this.getCurrentDateTime()
@@ -371,7 +379,7 @@
                                     }         
                         ).catch(error =>{
                             console.log(error)
-                            this.currentRequest.status = 'Создание'
+                            this.currentRequest.status = 'creation'
                         }
                         )
                 }         
@@ -401,7 +409,7 @@
             },
 
             requestAccept(){
-                if(this.currentRequest.status == 'Отправлена в архив'){
+                if(this.currentRequest.status == 'sent_for_processing'){
                 axios.patch('/api/requests/requests/'+ this.currentRequest.id + '/', {status:'accepted'}
                             ).then(response =>{
                                     console.log(response.data);
@@ -415,7 +423,7 @@
                 }         
             },
             requestCancel(){
-                if(this.currentRequest.status !== 'Создание'){
+                if(this.currentRequest.status !== 'creation'){
                 axios.patch('/api/requests/requests/'+ this.currentRequest.id + '/',
                         {
                         status:'cancelled',
@@ -436,7 +444,7 @@
             },
 
             requestDelete(){
-                if(this.currentRequest.status == 'Создание'){
+                if(this.currentRequest.status == 'creation'){
                 axios.delete('/api/requests/requests/'+ this.currentRequest.id + '/',
                             ).then(response =>{
                                     console.log(response.data)
@@ -468,7 +476,6 @@
             hasGroup(groupName) {
             return this.userStore.user && this.userStore.user.groups.some(group => group.name === groupName);
             },
-
         }
     }
     </script>

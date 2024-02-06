@@ -1,5 +1,5 @@
 <template>
-    <div class="space-y-3">
+    <div v-if="userStore.user.isAuthenticated && userStore.user.id" class="space-y-3">
         <h2 class="text-3xl font-bold mb-4">Регистрация</h2>
         <div class="p-6 bg-white border border-gray-200 rounded-lg">
             <div class="p-1 bg-white  rounded-lg">
@@ -189,23 +189,28 @@
             </ul>
         </div>
     </div>
+    <div v-else>
+      <AccessDenied />
+    </div>
+    
 </template>
-
-
+    
+    
 <script>
 import axios from 'axios'
+import AccessDenied from '../../components/AccessDenied.vue';
 import { useUserStore } from '../../stores/user'
 
-
-
-
-
 export default{
-    
+
+    components: {
+    AccessDenied,
+},
+
     setup() {
         const userStore = useUserStore()
         return {
-            userStore,
+            userStore
         }
     },
 

@@ -1,4 +1,5 @@
 <template>    
+<div v-if="userStore.user.isAuthenticated && userStore.user.id">
     <h2 class="text-3xl font-bold mb-8">Наряд на подбор {{ order.id }}</h2>
     <div>
         <button @click="printData" class="font-medium text-blue-600 dark:text-blue-500 hover:underline">Print</button>
@@ -41,17 +42,32 @@
                     </td>
                 </tr>
             </tbody>
-            
         </table>
-    
     </div>
+</div>
+<div v-else>
+    <AccessDenied />
+</div>
 </template>
-
-
+    
+    
 <script>
 import axios from 'axios'
+import AccessDenied from '../../components/AccessDenied.vue';
+import { useUserStore } from '../../stores/user'
 
-export default {
+export default{
+
+    components: {
+    AccessDenied,
+},
+
+    setup() {
+        const userStore = useUserStore()
+        return {
+            userStore
+        }
+    },
 
     data() {
         return {

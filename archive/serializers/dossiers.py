@@ -15,6 +15,12 @@ class ScanSerializer(serializers.ModelSerializer):
         fields = '__all__'
 
 
+class ScanCreateSerializer(serializers.ModelSerializer):
+
+    class Meta:
+        model = DossierScan
+        fields = '__all__'
+
 class DossierListSerializer(DossierSerializer):
     contract = ContractSearchSerializer()
 

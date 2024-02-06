@@ -1,12 +1,9 @@
-from celery import shared_task
 from django.db import transaction
-from rest_framework.exceptions import ParseError
 
 from archive.models import Dossier
 from common.services.registries import registry_accepting
 from common.validators import validate_dossier_barcode, validate_dossier_status
 from dossier_requests.models import DossierTask
-
 
 
 def update_dossiers_in_box_status_and_sector(archive_box):
@@ -36,3 +33,12 @@ def update_dossier(instance: Dossier, validated_data: dict, available_statuses: 
 
 def check_dossier_in_task(instance: Dossier) -> bool:
     return DossierTask.objects.filter(dossier=instance).exists()
+
+
+def update_dossiers_in_registry(dossiers, reg_status: str, reg_type: str) -> None:
+    if reg_status == 'sent' and reg_type == 'lr':
+        dossiers.update(status='Sent to requests')
+    if reg_status == 'sent' and reg_type == 'rc':
+        dossiers.update(status='Sent to customer')
+    if reg_status == 'sent' and reg_type == 'rl':
+        dossiers.update(status='Sent to logistics')

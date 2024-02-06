@@ -18,12 +18,18 @@ class TaskUpdateSerializer(serializers.ModelSerializer):
         fields = 'id', 'executor', 'task_status', 'commentary'
 
     def update(self, instance, validated_data):
-        status = validated_data.get('task_status', instance.task_status)
-        executor = validated_data.get('executor', instance.executor)
-        commentary = validated_data.get('commentary', instance.commentary)
-        instance.task_status = status
-        instance.executor = executor
-        instance.commentary = commentary
+        status = validated_data.get('task_status', None)
+        executor = validated_data.get('executor', None)
+        commentary = validated_data.get('commentary', None)
+        if status:
+            instance.task_status = status
+        if commentary:
+            instance.commentary = commentary
+        if executor:
+            instance.executor = executor
+
+
+
         instance.save()
         request = instance.request
         uncomplete_tasks = request.tasks.filter(task_status__in=('accepted', 'on_selection', 'selected'))
@@ -38,7 +44,6 @@ class TaskUpdateSerializer(serializers.ModelSerializer):
 
 
 class TaskListSerializer(serializers.ModelSerializer):
-    task_status = serializers.CharField(source='get_task_status_display')
     deadline = serializers.SerializerMethodField()
     request = RequestShortSerializer()
 
@@ -52,7 +57,6 @@ class TaskListSerializer(serializers.ModelSerializer):
 
 
 class TaskRetrieveSerializer(serializers.ModelSerializer):
-    task_status = serializers.CharField(source='get_task_status_display')
     request = RequestShortSerializer()
 
     class Meta:

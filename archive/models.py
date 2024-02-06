@@ -163,10 +163,10 @@ class Registry(models.Model):
         ('rc', 'Requests to Customer'),
     )
     REGISTRY_STATUSES = (
-        ('creation', 'Creation'),
-        ('sent', 'Sent'),
-        ('on_acceptance', 'On acceptance'),
-        ('accepted', 'Accepted'),
+        ('creation', 'Создание'),
+        ('sent', 'Отправлен'),
+        ('on_acceptance', 'На приёмке'),
+        ('accepted', 'Принят'),
     )
     type = models.CharField(choices=TYPES)
     status = models.CharField(choices=REGISTRY_STATUSES)

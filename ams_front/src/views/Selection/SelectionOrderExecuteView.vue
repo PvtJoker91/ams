@@ -1,5 +1,5 @@
 <template>
-    <div class="space-y-3">
+    <div v-if="userStore.user.isAuthenticated && userStore.user.id" class="space-y-3">
       <h2 class="text-3xl font-bold mb-4">Исполнение нарядов</h2>
   
         <div class="p-6 bg-white border border-gray-200 rounded-lg">
@@ -63,22 +63,31 @@
           </table>
       </div>
     </div>
+    <div v-else>
+      <AccessDenied />
+    </div>
+    
   </template>
-  
-  
-  
-  <script>
-  import axios from 'axios'
-  import { useUserStore } from '../../stores/user'
-  
-  export default{
+    
+    
+<script>
+import axios from 'axios'
+import AccessDenied from '../../components/AccessDenied.vue';
+import { useUserStore } from '../../stores/user'
+
+export default{
+
+    components: {
+    AccessDenied,
+},
+
     setup() {
         const userStore = useUserStore()
         return {
             userStore
         }
     },
-  
+
     data(){
         return{
         registries:[],
@@ -130,6 +139,7 @@
 
         sendRegistry(registry){
             registry.status = 'sent';
+            registry.type = 'lr';
             registry.sender = this.userStore.user.id
             axios.patch('/api/units/registry/' + registry.id + '/', registry).then(
                 response =>{

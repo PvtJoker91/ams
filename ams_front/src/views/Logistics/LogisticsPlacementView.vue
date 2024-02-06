@@ -1,5 +1,5 @@
 <template>
-  <div class="space-y-3"> 
+  <div v-if="userStore.user.isAuthenticated && userStore.user.id" class="space-y-3"> 
       <h2 class="text-3xl font-bold mb-4">Размещение архивных боксов</h2>
         <div div class="p-1 bg-white  rounded-lg"> 
             <div v-if="successMessege">{{ successMessege }}</div>
@@ -25,74 +25,89 @@ AB-00-000006
             </form>
         </div>
   </div>
-
+  <div v-else>
+    <AccessDenied />
+  </div>
+    
 </template>
-
 
 <script>
 import axios from 'axios'
+import AccessDenied from '../../components/AccessDenied.vue';
+import { useUserStore } from '../../stores/user'
 
 export default{
 
-  data(){
-      return{
-      insertForm: '',
-      barcodeAddressDict: {},
-      "archiveBox": {
-          "barcode":"",
-          "current_sector":"2",
-          "status":"Under storage",
-          "shelf_code": ""
-      },
-      successMessege:'',
-      }
-  },
+    components: {
+        AccessDenied,
+    },
 
-  methods: {
-
-  barcodeAddressDictMaker(string){
-    const result = {};
-    const listBarcodeAddress = string.split("\n");
-    let curShelf = listBarcodeAddress[0];
-    let curBox = listBarcodeAddress[1];
-    let i = 1;
-    while (i < listBarcodeAddress.length - 1) {
-        if (curBox !== curShelf) {
-            result[curBox] = curShelf;
-            curBox = listBarcodeAddress[i + 1];
-        } else {
-            curShelf = listBarcodeAddress[i + 1];
-            curBox = listBarcodeAddress[i + 2];
+    setup() {
+        const userStore = useUserStore()
+        return {
+            userStore
         }
-        i += 1;
-    }
+    },
 
-    this.barcodeAddressDict = result;
-    if (result){this.placeArchiveBox(this.barcodeAddressDict)};
-    
-},
-
-
-placeArchiveBox(dict){
-    this.successMessege = '';
-    let archiveBoxList = [];
-    for (const [box, shelf] of Object.entries(dict)) {
-      this.archiveBox.barcode = box;
-      this.archiveBox.shelf_code = shelf;
-      archiveBoxList.push(this.archiveBox)
-    }
-    axios.put('/api/logistics/placement', archiveBoxList).then(
-        response =>{
-            console.log(response.data)
-            this.successMessege = 'Короба размещены!'
+    data(){
+        return{
+        insertForm: '',
+        barcodeAddressDict: {},
+        "archiveBox": {
+            "barcode":"",
+            "current_sector":"2",
+            "status":"Under storage",
+            "shelf_code": ""
+        },
+        successMessege:'',
         }
-    ).catch(error =>{
-        console.log(error)
-    })
+    },
 
-    this.insertForm = ''
-  },
-  }
+    methods: {
+
+        barcodeAddressDictMaker(string){
+            const result = {};
+            const listBarcodeAddress = string.split("\n");
+            let curShelf = listBarcodeAddress[0];
+            let curBox = listBarcodeAddress[1];
+            let i = 1;
+            while (i < listBarcodeAddress.length - 1) {
+                if (curBox !== curShelf) {
+                    result[curBox] = curShelf;
+                    curBox = listBarcodeAddress[i + 1];
+                } else {
+                    curShelf = listBarcodeAddress[i + 1];
+                    curBox = listBarcodeAddress[i + 2];
+                }
+                i += 1;
+            }
+
+            this.barcodeAddressDict = result;
+            if (result){this.placeArchiveBox(this.barcodeAddressDict)};
+            
+        },
+
+
+        placeArchiveBox(dict){
+            this.successMessege = '';
+            let archiveBoxList = [];
+            for (const [box, shelf] of Object.entries(dict)) {
+            this.archiveBox.barcode = box;
+            this.archiveBox.shelf_code = shelf;
+            archiveBoxList.push(this.archiveBox)
+            }
+            axios.put('/api/logistics/placement', archiveBoxList).then(
+                response =>{
+                    console.log(response.data)
+                    this.successMessege = 'Короба размещены!'
+                }
+            ).catch(error =>{
+                console.log(error)
+            })
+
+            this.insertForm = ''
+        },
+    }
   
 
 }

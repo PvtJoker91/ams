@@ -1,8 +1,7 @@
 <template>
-    <div class="space-y-3">
+    <div v-if="userStore.user.isAuthenticated && userStore.user.id" class="space-y-3">
       <h2 class="text-3xl font-bold mb-4">Комплектование архивного бокса</h2>
   
-        <!-- Open Archive Box Form -->
         <div class="p-6 bg-white border border-gray-200 rounded-lg">
             <div class="p-1 bg-white  rounded-lg">
                 <form @submit.prevent="openArchiveBox" class="flex items-center">
@@ -14,13 +13,11 @@
                 </form>
             </div>
     
-            <!-- Close Archive Box Button -->
             <div v-if="Object.keys(this.currentArchiveBox).length !== 0" class="mt-2">
               <button class="py-1 px-2 bg-purple-600 text-white rounded-lg shadow-sm hover:bg-purple-500" @click="closeArchiveBox()">Закрыть бокс</button>
             </div>
         
-    
-        <!-- Add/Remove Dossier Form -->
+  
             <div class="p-1 bg-white  rounded-lg" v-if="Object.keys(this.currentArchiveBox).length !== 0">
                 <form @submit.prevent="addOrRemoveDossier" class="flex items-center">
                     <label class="form-label mr-2">Введите ш/к для добавления/изъятия досье:</label>
@@ -64,6 +61,9 @@
           </div>
         </div>
     </div>
+    <div v-else>
+      <AccessDenied />
+    </div>
   </template>
   
 
@@ -71,9 +71,22 @@
 <script>
 import axios from 'axios'
 import _ from 'lodash';
+import AccessDenied from '../../components/AccessDenied.vue';
+import { useUserStore } from '../../stores/user'
 
 
 export default{
+  
+  components: {
+        AccessDenied,
+    },
+
+  setup() {
+        const userStore = useUserStore()
+        return {
+            userStore
+        }
+    },
 
   data(){
       return{

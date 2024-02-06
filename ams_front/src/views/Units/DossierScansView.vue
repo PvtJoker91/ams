@@ -1,5 +1,6 @@
 <template>
-    <div class="space-y-3">
+    <div v-if="userStore.user.isAuthenticated && userStore.user.id" class="space-y-3">
+      <div v-if="Object.keys(dossier).length!==0">
         <h2 class="text-3xl font-bold mb-8">Карточка досье {{dossier.barcode}}</h2>
         <div class="flex">
 
@@ -40,29 +41,38 @@
                 </div>
             </div>
         </div>
+        </div>
     </div>
-</template>
+    <div v-else>
+      <AccessDenied />
+    </div>
     
-<script>
-    import axios from 'axios';
+  </template>
     
-    export default {
+    
+    <script>
+    import axios from 'axios'
+    import AccessDenied from '../../components/AccessDenied.vue';
+    import { useUserStore } from '../../stores/user'
+    
+    export default{
+
+      components: {
+        AccessDenied,
+    },
+
+      setup() {
+            const userStore = useUserStore()
+            return {
+                userStore
+            }
+        },
+
       data() {
         return {
-          dossier:{
-            'contract':{
-                'client':{},
-                'product':{}
-              },
-            'registerer':{
-              'last_name':'',
-              'first_name':'',
-            },
-            'scans': [],
-          },
+          dossier:{},
         }
       },
-
 
       mounted() {
         this.getDossier();

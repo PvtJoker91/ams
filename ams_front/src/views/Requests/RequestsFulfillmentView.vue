@@ -1,5 +1,5 @@
 <template>
-    <div class="space-y-3">
+    <div v-if="userStore.user.isAuthenticated && userStore.user.id" class="space-y-3">
         <h2 class="text-3xl font-bold mb-4">Обработка заявок</h2>
 
 
@@ -30,5 +30,28 @@
         
         </div>
     </div>
+    <div v-else>
+      <AccessDenied />
+    </div>
+    
+  </template>
+    
+    
+  <script>
+    import AccessDenied from '../../components/AccessDenied.vue';
+    import { useUserStore } from '../../stores/user'
+    
+    export default{
 
-</template>
+      components: {
+        AccessDenied,
+    },
+
+      setup() {
+            const userStore = useUserStore()
+            return {
+                userStore
+            }
+        },
+    }
+   </script> 

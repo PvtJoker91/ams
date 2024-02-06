@@ -14,6 +14,7 @@ SECRET_KEY = env.str('SECRET_KEY')
 
 DEBUG = env.bool('DEBUG', default=False)
 ALLOWED_HOSTS = env.str('ALLOWED_HOSTS', default='').split(' ')
+CSRF_TRUSTED_ORIGINS = env.str('CSRF_TRUSTED_ORIGINS', default='').split(' ')
 
 INTERNAL_IPS = ['127.0.0.1',]
 
@@ -187,9 +188,7 @@ MEDIA_ROOT = os.path.join(BASE_DIR, 'media/')
 # CORS HEADERS
 ######################
 CORS_ORIGIN_ALLOW_ALL = False
-CORS_ALLOWED_ORIGINS = [
-    'http://localhost:5173',
-]
+CORS_ALLOWED_ORIGINS = env.str('CSRF_TRUSTED_ORIGINS', default='').split(' ')
 CORS_ALLOW_CREDENTIALS = True
 CORS_ALLOW_HEADERS = ['*']
 CSRF_COOKIE_SECURE = False

@@ -1,5 +1,5 @@
 <template>
-  <div class="space-y-3">
+  <div v-if="userStore.user.isAuthenticated && userStore.user.id" class="space-y-3">
     <h2 class="text-3xl font-bold mb-4">Исполнить задание</h2>
 
       <div class="p-6 bg-white border border-gray-200 rounded-lg">
@@ -217,22 +217,30 @@
           </table>
       </div>
   </div>
-</template>
-
-
-
+  <div v-else>
+      <AccessDenied />
+    </div>
+    
+  </template>
+    
+    
 <script>
 import axios from 'axios'
+import AccessDenied from '../../components/AccessDenied.vue';
 import { useUserStore } from '../../stores/user'
 
-
 export default{
+
+  components: {
+    AccessDenied,
+},
+
   setup() {
-            const userStore = useUserStore()
-            return {
-                userStore,
-            }
-          },
+        const userStore = useUserStore()
+        return {
+            userStore
+        }
+    },
 
   data(){
       return{
@@ -307,7 +315,7 @@ export default{
 
     uploadScan() {
       const formData = new FormData();
-      formData.append('dossier', this.dossierBarcode);
+      formData.append('dossier', this.dossierBarcode.trim());
       formData.append('file', this.scan.file);
       formData.append('name', this.scan.fileName);
       formData.append('description', this.scan.fileDescription);

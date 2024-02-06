@@ -68,9 +68,15 @@ class ScanView(mixins.CreateModelMixin,
                GenericViewSet):
     serializer_class = dossiers.ScanSerializer
     queryset = DossierScan.objects.all()
+    permission_classes = [IsAuthenticated]
 
     def get_queryset(self):
         dossier = self.request.query_params.get('dossier')
         if dossier:
             return DossierScan.objects.filter(dossier=dossier).select_related('dossier__contract', 'uploader')
         return DossierScan.objects.select_related('dossier__contract', 'uploader').all()
+
+    def get_serializer_class(self):
+        if self.request.method == 'POST':
+            return dossiers.ScanCreateSerializer
+        return dossiers.ScanSerializer

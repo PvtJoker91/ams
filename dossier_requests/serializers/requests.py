@@ -1,13 +1,19 @@
 import datetime
 
+from django.contrib.auth import get_user_model
 from django.db.models import Count
 from rest_framework import serializers
+from rest_framework.fields import CurrentUserDefault
 
 from archive.models import Dossier
 from archive.serializers.dossiers import DossierScanCountSerializer
+from common.exeptions import CustomAPIException
+from common.permissions import NON_STAFF_GROUP
 from dossier_requests.models import DossierRequest
 from dossier_requests.serializers.nested import UserShortSerializer, TaskShortSerializer
 from dossier_requests.serializers.utils import deadline
+
+User = get_user_model()
 
 
 class RequestCreateSerializer(serializers.ModelSerializer):
@@ -21,11 +27,17 @@ class RequestUpdateSerializer(serializers.ModelSerializer):
         model = DossierRequest
         fields = 'status', 'dossiers', 'closer', 'close_reason', 'time_create', 'time_close'
 
+    def update(self, instance, validated_data):
+        user_id = CurrentUserDefault()
+        user_id = self.context['request'].user.id
+        user = User.objects.get(id=user_id)
+        status = validated_data.get('status', None)
+        if status and status == 'accepted' and user.groups.filter(name__in=NON_STAFF_GROUP).exists():
+            raise CustomAPIException('Недостаточно прав!')
+        return super().update(instance, validated_data)
+
 
 class RequestListSerializer(serializers.ModelSerializer):
-    status = serializers.CharField(source='get_status_display')
-    service = serializers.CharField(source='get_service_display')
-    urgency = serializers.CharField(source='get_urgency_display')
     deadline = serializers.SerializerMethodField()
     tasks = TaskShortSerializer(many=True)
 
@@ -38,9 +50,6 @@ class RequestListSerializer(serializers.ModelSerializer):
 
 
 class RequestRetrieveSerializer(serializers.ModelSerializer):
-    status = serializers.CharField(source='get_status_display')
-    service = serializers.CharField(source='get_service_display')
-    urgency = serializers.CharField(source='get_urgency_display')
     creator = UserShortSerializer()
     closer = UserShortSerializer()
     dossiers = serializers.SerializerMethodField()

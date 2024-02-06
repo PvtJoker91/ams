@@ -1,7 +1,7 @@
 <template>
 
     
-    <div class="space-y-3">
+    <div v-if="userStore.user.isAuthenticated && userStore.user.id" class="space-y-3">
             <h2 class="text-3xl font-bold mb-4">Подбор документов</h2>
             <RouterLink to="/selection/orders">
                 <div class="main-right">
@@ -29,7 +29,27 @@
             </RouterLink>
         </div>
     </div>
-
-
+    <div v-else>
+      <AccessDenied />
+    </div>
 
 </template>
+
+<script>
+import AccessDenied from '../../components/AccessDenied.vue';
+import { useUserStore } from '../../stores/user'
+
+export default{
+
+  components: {
+    AccessDenied,
+},
+
+  setup() {
+        const userStore = useUserStore()
+        return {
+            userStore
+        }
+    },
+}
+</script> 

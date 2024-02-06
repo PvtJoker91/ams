@@ -1,7 +1,6 @@
 <template>
-
     
-    <div class="space-y-3">
+    <div v-if="userStore.user.isAuthenticated && userStore.user.id" class="space-y-3">
             <h2 class="text-3xl font-bold mb-4">Логистика</h2>
 
         <div class="max-w-7xl mx-auto grid grid-cols-3 gap-4">
@@ -31,6 +30,30 @@
         </div>
     </div>
 
-
-
+    <div v-else>
+      <AccessDenied />
+    </div>
+    
 </template>
+    
+    
+<script>
+    import AccessDenied from '../../components/AccessDenied.vue';
+    import { useUserStore } from '../../stores/user'
+    
+    export default{
+
+      components: {
+        AccessDenied,
+    },
+
+      setup() {
+            const userStore = useUserStore()
+            return {
+                userStore
+            }
+        },
+    }
+</script> 
+    
+      
