@@ -20,8 +20,8 @@
                       {{ number + 1 }}
                     </th>
                     <td :class="{ 
-                                  'px-6 py-3 font-bold': !checkDossier(dossier), 
-                                  'px-6 py-3': checkDossier(dossier) }">
+                                  'px-6 py-3 font-bold': checkDossier(dossier),
+                                  'px-6 py-3': !checkDossier(dossier) }">
                       {{ dossier }}
                     </td>
                 </tr>
