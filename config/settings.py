@@ -18,6 +18,7 @@ CSRF_TRUSTED_ORIGINS = env.str('CSRF_TRUSTED_ORIGINS', default='').split(' ')
 
 INTERNAL_IPS = ['127.0.0.1',]
 
+SITE_URL = env.str('SITE_URL')
 # sending emails
 
 EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
@@ -179,7 +180,6 @@ USE_TZ = False
 # STATIC AND MEDIA
 ######################
 STATIC_URL = '/static/'
-# STATICFILES_DIRS = [os.path.join(BASE_DIR, 'static/')]
 STATIC_ROOT = os.path.join(BASE_DIR, 'static/')
 MEDIA_URL = '/media/'
 MEDIA_ROOT = os.path.join(BASE_DIR, 'media/')
@@ -226,11 +226,11 @@ SPECTACULAR_SETTINGS = {
 # DJOSER
 #######################
 DJOSER = {
-    'PASSWORD_RESET_CONFIRM_URL': 'localhost:5173/reset-password/{uid}/{token}',
-    'USERNAME_RESET_CONFIRM_URL': '#/username/reset/confirm/{uid}/{token}',
-    'ACTIVATION_URL': '#/activate/{uid}/{token}',
-    'SEND_ACTIVATION_EMAIL': False,
-    'SERIALIZERS': {},
+    # 'PASSWORD_RESET_CONFIRM_URL': '34.116.240.42/reset-password/{uid}/{token}',
+    # 'USERNAME_RESET_CONFIRM_URL': '#/username/reset/confirm/{uid}/{token}',
+    # 'ACTIVATION_URL': '#/activate/{uid}/{token}',
+    # 'SEND_ACTIVATION_EMAIL': False,
+    # 'SERIALIZERS': {},
 }
 
 SIMPLE_JWT = {
