@@ -37,7 +37,7 @@
                 
             })
             .catch(error => {
-                console.error('Ошибка восстановления пароля:', error.response.data);
+                console.error('Ошибка восстановления пароля:', error);
             })
 
       },

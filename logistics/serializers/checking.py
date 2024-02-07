@@ -1,7 +1,7 @@
 from archive.models import ArchiveBox, Dossier
 from archive.serializers.nested import ABSerializer, DossierSerializer
 from common.services.archive_box import update_box_under_checking
-from common.services.dossiers import update_dossier
+from common.services.dossiers import update_dossier_while_box_checking_and_completion
 from common.statuses import DOSSIER_CHECKING_AVAILABLE_STATUSES
 
 
@@ -16,7 +16,7 @@ class DossierCheckSerializer(DossierSerializer):
         )
 
     def update(self, instance, validated_data):
-        return update_dossier(instance, validated_data, DOSSIER_CHECKING_AVAILABLE_STATUSES)
+        return update_dossier_while_box_checking_and_completion(instance, validated_data, DOSSIER_CHECKING_AVAILABLE_STATUSES)
 
 
 class ABCheckSerializer(ABSerializer):

@@ -50,7 +50,7 @@ class RequestView(mixins.ListModelMixin,
         'time_create',
         'time_close',
     ]
-    ordering = ['urgency']
+    ordering = ['urgency', '-status']
 
     def get_paginated_response(self, data):
         response = super().get_paginated_response(data)

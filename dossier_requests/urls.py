@@ -2,7 +2,7 @@ from django.urls import path, include
 from rest_framework import routers
 
 from dossier_requests.views.requests import MyRequestsView, RequestView
-from dossier_requests.views.tasks import TaskView, TaskExecuteView
+from dossier_requests.views.dossier_tasks import TaskView, TaskExecuteView
 
 router = routers.SimpleRouter()
 router.register(r'requests', RequestView, basename='requests')

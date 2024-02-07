@@ -57,7 +57,6 @@ INSTALLED_APPS += [
 # apps
 INSTALLED_APPS += [
     'api',
-    'common',
     'accounts',
     'archive',
     'bank_clients',

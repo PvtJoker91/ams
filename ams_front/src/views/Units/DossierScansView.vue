@@ -33,12 +33,21 @@
             </div>
             <div class="flex-1 mt-6">
                 <h2 class="text-xl font-bold mb-4">Добавленные скан-копии:</h2>
-                <div v-for="scan in dossier.scans">
-                    <span class="block">
-                        <a :href="scan.file" target="_blank" class="text-blue-500 hover:text-blue-700">{{ scan.name }}</a>
-                        {{ scan.description }} {{ scan.uploader }} {{ scan.date_upload }}
-                    </span>
-                </div>
+                <div v-for="scan in dossier.scans" :key="scan.id" class="highlighted">
+                    <ul>
+                        <details>
+                            <summary>
+                                  <h2 class="text-m">Документ:         {{ scan.name }}</h2>
+                            </summary>
+                            <div class="mt-3 text-sm">
+                                <li><a :href="scan.file" target="_blank" class="text-blue-500 hover:text-blue-700"><b>Открыть скан</b></a></li>
+                                <li><b>Добавил:</b>     {{ scan.uploader.first_name }} {{ scan.uploader.last_name }}</li>
+                                <li><b>Дата добавления:</b>     {{ scan.date_upload }}</li>
+                                <li><b>Описание:</b>     {{ scan.description }}</li>
+                            </div>
+                        </details>
+                    </ul>
+                </div> 
             </div>
         </div>
         </div>

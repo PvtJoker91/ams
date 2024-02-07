@@ -52,7 +52,7 @@ class PasswordRecoveryView(APIView):
     def get_recovery_url(self, user) -> str:
         uidb64 = force_str(urlsafe_base64_encode(force_bytes(user.pk)))
         token = RefreshToken.for_user(user).access_token
-        return f'{settings.SITE_URL}/reset-password/{uidb64}/{token}/'
+        return f'<a>{settings.SITE_URL}/reset-password/{uidb64}/{token}/</a>'
 
 
 @extend_schema_view(

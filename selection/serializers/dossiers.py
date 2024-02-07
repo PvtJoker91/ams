@@ -3,6 +3,8 @@ from rest_framework.exceptions import ParseError
 
 from archive.models import Dossier, Registry
 from archive.serializers.nested import DossierSerializer, RegistryShortSerializer
+from common.services.dossier_tasks import change_tasks_status_while_dossier_selecting
+from common.services.registries import add_dossier_to_registry_while_selecting
 from common.validators import validate_dossier_barcode
 from dossier_requests.models import DossierTask
 from selection.models import SelectionOrder
@@ -25,22 +27,6 @@ class DossierSelectingSerializer(DossierSerializer):
         существующий реестр в статусе "creation", либо в новый.
         """
         validate_dossier_barcode(instance.barcode)
-        tasks = DossierTask.objects.filter(dossier=instance, task_status='on_selection')
-        if not tasks.exists():
-            raise ParseError(f'Dossier is not in any task')
-        for task in tasks:
-            orders = SelectionOrder.objects.filter(tasks=task)
-            for order in orders:
-                order.selected.add(task.dossier)
-            task.task_status = 'selected'
-            task.save()
-        if Registry.objects.filter(status='creation', type='lr').exists():
-            reg = Registry.objects.get(status='creation', type='lr')
-        elif Registry.objects.filter(status='sent', type='lr').exists():
-            reg = Registry.objects.get(status='sent', type='lr')
-            raise ParseError(f'Dossier is already in registry {reg.id} which in status "{reg.status}"')
-        else:
-            reg = Registry.objects.create(status='creation', type='lr')
-        if instance not in reg.dossiers.values():
-            reg.dossiers.add(instance)
+        change_tasks_status_while_dossier_selecting(instance)
+        add_dossier_to_registry_while_selecting(instance)
         return super().update(instance, validated_data)

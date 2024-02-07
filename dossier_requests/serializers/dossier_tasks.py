@@ -2,6 +2,7 @@ import datetime
 
 from rest_framework import serializers
 
+from common.services.requests import change_request_status
 from dossier_requests.models import DossierTask
 from dossier_requests.serializers.nested import RequestShortSerializer
 
@@ -18,28 +19,8 @@ class TaskUpdateSerializer(serializers.ModelSerializer):
         fields = 'id', 'executor', 'task_status', 'commentary'
 
     def update(self, instance, validated_data):
-        status = validated_data.get('task_status', None)
-        executor = validated_data.get('executor', None)
-        commentary = validated_data.get('commentary', None)
-        if status:
-            instance.task_status = status
-        if commentary:
-            instance.commentary = commentary
-        if executor:
-            instance.executor = executor
-
-
-
-        instance.save()
-        request = instance.request
-        uncomplete_tasks = request.tasks.filter(task_status__in=('accepted', 'on_selection', 'selected'))
-        if not uncomplete_tasks.exists():
-            request.status = 'complete'
-            request.save()
-        else:
-            if request.status != 'in_progress':
-                request.status = 'in_progress'
-                request.save()
+        instance = super().update(instance, validated_data)
+        change_request_status(instance)
         return instance
 
 

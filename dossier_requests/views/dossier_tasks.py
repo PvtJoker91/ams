@@ -1,4 +1,3 @@
-from django.db import transaction
 from django_filters.rest_framework import DjangoFilterBackend
 from drf_spectacular.utils import extend_schema, extend_schema_view
 from rest_framework import mixins, filters, status
@@ -6,15 +5,14 @@ from rest_framework.exceptions import ParseError
 from rest_framework.response import Response
 from rest_framework.viewsets import GenericViewSet
 
-from archive.models import Dossier, Sector
+from archive.models import Dossier
 from common.pagination import CustomPagination
-from common.services.registries import registry_accepting
-from common.statuses import DOSSIER_REQUEST_EXECUTION_AVAILABLE_STATUSES
-from common.validators import validate_dossier_barcode, validate_dossier_status
+from common.services.dossiers import update_dossier_while_task_execution
+from common.validators import validate_dossier_barcode
 from common.views.mixins import ExtendedGenericViewSet
 from dossier_requests.models import DossierTask
 from dossier_requests.permissions import IsInRequestsGroup
-from dossier_requests.serializers import tasks
+from dossier_requests.serializers import dossier_tasks
 
 
 @extend_schema_view(
@@ -29,12 +27,12 @@ class TaskView(mixins.ListModelMixin,
                mixins.UpdateModelMixin,
                ExtendedGenericViewSet):
     queryset = DossierTask.objects.all()
-    serializer_class = tasks.TaskListSerializer
+    serializer_class = dossier_tasks.TaskListSerializer
     multi_serializer_class = {
-        'list': tasks.TaskListSerializer,
-        'retrieve': tasks.TaskRetrieveSerializer,
-        'create': tasks.TaskCreateSerializer,
-        'partial_update': tasks.TaskUpdateSerializer,
+        'list': dossier_tasks.TaskListSerializer,
+        'retrieve': dossier_tasks.TaskRetrieveSerializer,
+        'create': dossier_tasks.TaskCreateSerializer,
+        'partial_update': dossier_tasks.TaskUpdateSerializer,
     }
     pagination_class = CustomPagination
     http_method_names = ('get', 'post', 'patch', 'delete')
@@ -72,24 +70,16 @@ class TaskView(mixins.ListModelMixin,
 class TaskExecuteView(mixins.ListModelMixin,
                       GenericViewSet):
     queryset = DossierTask.objects.all()
-    serializer_class = tasks.TaskListSerializer
+    serializer_class = dossier_tasks.TaskListSerializer
     http_method_names = ('get',)
     permission_classes = [IsInRequestsGroup]
 
     def get_queryset(self):
-        barcode = self.request.query_params.get('dossier_barcode', None)
-        if barcode:
-            validate_dossier_barcode(barcode)
-            if not DossierTask.objects.filter(dossier=barcode).exists():
-                raise ParseError('Dossier is not in any task')
-            if Dossier.objects.filter(barcode=barcode).exists():
-                with transaction.atomic():
-                    dossier_instance = Dossier.objects.get(barcode=barcode)
-                    validate_dossier_status(dossier_instance, DOSSIER_REQUEST_EXECUTION_AVAILABLE_STATUSES)
-                    dossier_instance.status = 'Accepted in requests'
-                    sector = Sector.objects.get(name='Запросы')
-                    dossier_instance.current_sector = sector
-                    dossier_instance.save()
-                    registry_accepting(dossier_instance, 'lr')
+        barcode = self.request.query_params.get('dossier_barcode')
+        validate_dossier_barcode(barcode)
+        if not DossierTask.objects.filter(dossier=barcode).exists():
+            raise ParseError('Dossier is not in any task')
+        if Dossier.objects.filter(barcode=barcode).exists():
+            update_dossier_while_task_execution(barcode)
         return DossierTask.objects.filter(dossier=barcode, task_status__in=('accepted', 'selected')
                                           ).select_related('request')

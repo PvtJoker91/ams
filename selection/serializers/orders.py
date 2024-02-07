@@ -1,6 +1,7 @@
 from rest_framework import serializers
 
 from accounts.serializers.nested import AMSUserShortSerializer
+from common.services.dossier_tasks import change_tasks_status_while_order_creation
 from dossier_requests.models import DossierTask
 from selection.models import SelectionOrder
 from selection.serializers.print import TaskPrintSerializer
@@ -25,7 +26,5 @@ class SelectionOrderCreateSerializer(serializers.ModelSerializer):
 
     def create(self, validated_data):
         tasks = validated_data.get('tasks', [])
-        task_ids = [task.id for task in tasks]
-        task_instances = DossierTask.objects.filter(id__in=task_ids)
-        task_instances.update(task_status='on_selection')
+        change_tasks_status_while_order_creation(tasks)
         return super().create(validated_data)

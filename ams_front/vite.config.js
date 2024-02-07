@@ -1,8 +1,17 @@
-import vue from '@vitejs/plugin-vue';
+import { defineConfig } from 'vite'
+import vue from '@vitejs/plugin-vue'
 
-export default {
+export default defineConfig({
   plugins: [vue()],
-  server: {
-    port: 5173, // Порт, на котором будет запущен сервер разработки
+  build: {
+    target: 'modules',
+    outDir: 'dist',
+    assetsDir: 'assets',
+    minify: 'terser', // Минификация кода
+    terserOptions: {
+      compress: {
+        drop_console: true, // Удалить console.log из продакшен-кода
+      },
+    },
   },
-};
+})

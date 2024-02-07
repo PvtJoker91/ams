@@ -15,13 +15,13 @@
                 </tr>
             </thead>
             <tbody>
-                <tr v-for="dossier, number in dossiers" :key="number" class="bg-white border-b dark:bg-gray-800 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-600">
+                <tr v-for="dossier, number in registry.dossiers" :key="number" class="bg-white border-b dark:bg-gray-800 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-600">
                     <th scope="row" class="px-6 py-3 font-medium text-gray-900 whitespace-nowrap dark:text-white">
                       {{ number + 1 }}
                     </th>
                     <td :class="{ 
-                                  'px-6 py-3 font-bold': checkDossier(dossier), 
-                                  'px-6 py-3': !checkDossier(dossier) }">
+                                  'px-6 py-3 font-bold': !checkDossier(dossier), 
+                                  'px-6 py-3': checkDossier(dossier) }">
                       {{ dossier }}
                     </td>
                 </tr>
@@ -57,8 +57,9 @@
 
       data(){
           return{
-          registry: {},
-          dossiers: [],
+          registry: {
+            dossiers: [],
+          },
           }
       },
 
@@ -72,7 +73,6 @@
                         ).then(response =>{
                                 console.log(response.data)
                                 this.registry = response.data
-                                this.dossiers = response.data.dossiers
                                 }         
                     ).catch(error =>{
                         console.log(error)
@@ -80,7 +80,7 @@
         },
 
         checkDossier(dossier){
-          return dossier.includes(this.dossiers.checked_dossiers)
+          return dossier.includes(this.registry.checked_dossiers)
       },
     
     }
