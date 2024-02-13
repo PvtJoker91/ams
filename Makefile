@@ -30,7 +30,7 @@ storages-logs:
 app:
 	${DC} -f ${APP_FILE} ${env}  -f ${STORAGES_FILE} -f ${WORKERS_FILE} ${ENV} up --build -d
 
-.PHONY: back-logs
+.PHONY: app-logs
 back-logs:
 	${LOGS} ${APP_CONTAINER} -f
 
