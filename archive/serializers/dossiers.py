@@ -1,3 +1,4 @@
+from django.core.cache import cache
 from django.core.exceptions import ObjectDoesNotExist
 from rest_framework import serializers
 
@@ -16,10 +17,10 @@ class ScanSerializer(serializers.ModelSerializer):
 
 
 class ScanCreateSerializer(serializers.ModelSerializer):
-
     class Meta:
         model = DossierScan
         fields = '__all__'
+
 
 class DossierListSerializer(DossierSerializer):
     contract = ContractSearchSerializer()
@@ -64,16 +65,25 @@ class DossierDetailSerializer(DossierSerializer):
                   'history')
 
     def get_history(self, obj) -> list:
-        history_entries = obj.history.all()
 
-        return [{
-            'timestamp': entry.history_date.strftime("%d.%m.%Y %H:%M"),
-            'status': entry.history_object.status,
-            'archive_box': self.get_archive_box(entry),
-            'location': self.get_location(entry),
-            'user_first_name': entry.history_user.first_name if entry.history_user else None,
-            'user_last_name': entry.history_user.last_name if entry.history_user else None,
-        } for entry in history_entries]
+        dossier_history_cache_name = 'dossier_history_cache' + str(obj.barcode)
+        dossier_history_cache = cache.get(dossier_history_cache_name)
+
+        if dossier_history_cache:
+            dossier_history = dossier_history_cache
+        else:
+            history_entries = obj.history.all()
+            dossier_history = [{
+                'timestamp': entry.history_date.strftime("%d.%m.%Y %H:%M"),
+                'status': entry.history_object.status,
+                'archive_box': self.get_archive_box(entry),
+                'location': self.get_location(entry),
+                'user_first_name': entry.history_user.first_name if entry.history_user else None,
+                'user_last_name': entry.history_user.last_name if entry.history_user else None,
+            } for entry in history_entries]
+            cache.set(dossier_history_cache_name, dossier_history, 1000)
+
+        return dossier_history
 
     def get_archive_box(self, entry):
         try:
