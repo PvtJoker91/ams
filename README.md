@@ -9,7 +9,7 @@ The service enables the management of archived documents and includes the follow
 
 Project based on Django, DRF, Vue3, Docker
 
-Web-site: https://amsservice.online/
+Web-site: [ams-service](amsservice.online)
 
 ## Requirements
 - [Docker](https://www.docker.com/get-started)
