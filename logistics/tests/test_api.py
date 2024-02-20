@@ -1,9 +1,11 @@
+import json
+
 from django.contrib.auth import get_user_model
-from django.urls import reverse
 from django.utils import timezone
 from rest_framework import status
-from rest_framework.test import APITestCase
+from rest_framework.test import APITestCase, APIClient
 
+from accounts.models.users import AMSGroup
 from archive.models import Dossier, ArchiveBox, Sector
 from bank_clients.models import Contract, Product, Client
 
@@ -13,7 +15,11 @@ User = get_user_model()
 class DossierCheckViewTests(APITestCase):
 
     def setUp(self):
-        self.user = User.objects.create(email='test@mail.ru')
+        self.user = User.objects.create(email='test@mail.ru', password='test_user_password')
+        self.logistics_group = AMSGroup.objects.create(name='Логисты')
+        self.user.groups.add(self.logistics_group)
+        self.client = APIClient()
+        self.client.force_authenticate(user=self.user)
         self.bank_client = Client.objects.create(last_name='Ivanov',
                                                  first_name='Ivan',
                                                  middle_name='Ivanovich',
@@ -35,45 +41,38 @@ class DossierCheckViewTests(APITestCase):
                                                       current_sector=self.sector,
                                                       status='На регистрации')
 
-        self.dossier1 = Dossier.objects.create(barcode='D00-00-00000001',
-                                               status='На регистрации',
-                                               current_sector=self.sector,
-                                               contract=self.contract,
-                                               archive_box=self.archive_box1,
-                                               registerer=self.user)
+        self.dossier_data = {
+            'barcode': 'D00-00-00000001',
+            'status': 'Under checking',
+            'current_sector': self.sector,
+            'contract': self.contract,
+            'archive_box': self.archive_box1,
+            'registerer': self.user
+        }
 
-        # Set up the API URL for the DossierCheckView
+        self.dossier1 = Dossier.objects.create(**self.dossier_data)
 
-
-    def test_retrieve_dossier(self):
-        url = reverse('dossierchecking-detail', kwargs={'pk': self.dossier.pk})
-        response = self.client.get(url)
-        self.assertEqual(response.status_code, status.HTTP_200_OK)
-        # Add more assertions based on your expected behavior
 
     def test_update_dossier(self):
+        url = f'/api/logistics/checking-dossier/{self.dossier1.pk}/'
         data = {
-            # Add data for updating the Dossier
-            # ...
+            'barcode': self.dossier1.pk,
+            'status': 'Is checked',
+            'archive_box': self.archive_box2.id,
         }
-        response = self.client.patch(self.url, data, format='json')
+        json_data = json.dumps(data)
+        response = self.client.patch(url, json_data, content_type='application/json')
         self.assertEqual(response.status_code, status.HTTP_200_OK)
-        # Add more assertions based on your expected behavior
+        self.assertEqual(response.data['status'], 'Is checked')
 
-    def test_invalid_barcode_retrieve(self):
-        invalid_barcode_url = reverse('dossierchecking-detail', kwargs={'barcode': 'invalid-barcode'})
-        response = self.client.get(invalid_barcode_url)
-        self.assertEqual(response.status_code, status.HTTP_404_NOT_FOUND)
-        # Add more assertions based on your expected behavior for an invalid barcode
 
     def test_invalid_barcode_update(self):
-        invalid_barcode_url = reverse('dossierchecking-detail', kwargs={'barcode': 'invalid-barcode'})
+        url = f'/api/logistics/checking-dossier/D00-00-00000002/'
         data = {
-            # Add data for updating the Dossier
-            # ...
+            'barcode': 'D00-00-00000002',
+            'status': 'Is checked',
+            'archive_box': self.archive_box2.id,
         }
-        response = self.client.patch(invalid_barcode_url, data, format='json')
+        response = self.client.patch(url, data, content_type='application/json')
         self.assertEqual(response.status_code, status.HTTP_404_NOT_FOUND)
-        # Add more assertions based on your expected behavior for an invalid barcode
 
-    # Add more test cases based on your requirements

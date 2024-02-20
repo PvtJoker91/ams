@@ -191,7 +191,7 @@
             ){
                 currentDossier.archive_box = this.currentArchiveBox.id;
                 currentDossier.status = 'Checked in a box';
-                axios.patch('/api/logistics/checking/dossier/' +  currentDossier.barcode + '/', currentDossier).then(
+                axios.patch('/api/logistics/checking-dossier/' +  currentDossier.barcode + '/', currentDossier).then(
                 response =>{
                     console.log(response.data)
                     this.addedDossiers.push(currentDossier);
@@ -209,7 +209,7 @@
             ){
                 currentDossier.archive_box = this.currentArchiveBox.id;
                 currentDossier.status = 'Checked in a box';
-                axios.patch('/api/logistics/checking/dossier/' +  currentDossier.barcode + '/', currentDossier).then(
+                axios.patch('/api/logistics/checking-dossier/' +  currentDossier.barcode + '/', currentDossier).then(
                 response =>{
                     console.log(response.data);
                     this.moveToDestination(currentDossier, this.dossiers, this.checkedDossiers)

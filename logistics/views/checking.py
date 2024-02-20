@@ -9,15 +9,14 @@ from logistics.serializers.checking import DossierCheckSerializer, ABCheckSerial
 
 
 @extend_schema_view(
-    partial_update=extend_schema(summary='Checking // Update dossier box, status, current_sector', tags=['Logistics']),
-    retrieve=extend_schema(summary='Get dossier', tags=['Logistics']), )
+    partial_update=extend_schema(summary='Checking // Update dossier box, status, current_sector', tags=['Logistics'])
+)
 class DossierCheckView(mixins.UpdateModelMixin,
-                       mixins.RetrieveModelMixin,
                        GenericViewSet):
     queryset = Dossier.objects.all().select_related('current_sector')
     serializer_class = DossierCheckSerializer
     permission_classes = [IsInLogisticsGroup]
-    http_method_names = ('get', 'patch',)
+    http_method_names = ('patch',)
 
     def update(self, request, *args, **kwargs):
         barcode = kwargs.get('pk', None)

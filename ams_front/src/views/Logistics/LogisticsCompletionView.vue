@@ -175,7 +175,7 @@ export default{
         ){
             currentDossier.archive_box = this.currentArchiveBox.id;
             currentDossier.status = 'Added to a box';
-            axios.patch('/api/logistics/completion/dossier/' +  currentDossier.barcode + '/', currentDossier).then(
+            axios.patch('/api/logistics/completion-dossier/' +  currentDossier.barcode + '/', currentDossier).then(
             response =>{
                 console.log(response.data)
                 this.addedDossiers.push(currentDossier);
@@ -209,7 +209,7 @@ export default{
     },
 
     makeRequest (barcode, dossier, from, to) {
-      axios.patch('/api/logistics/completion/dossier/' +  barcode + '/', dossier).then(
+      axios.patch('/api/logistics/completion-dossier/' +  barcode + '/', dossier).then(
           response =>{
               console.log(response.data);
               this.moveToDestination(dossier, from, to);
